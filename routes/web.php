@@ -12,5 +12,31 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+   // return view('welcome');
+   return 'Home';
 });
+
+Route::get('/usuarios', function () {
+    // return view('welcome');
+    return 'Usuarios ';
+ });
+
+Route::get('/usuarios/nuevo', function () {
+    return 'Crear nuevo usuario';
+});
+
+Route::get('/usuarios/{id}', function($id){
+    return "Mostrando detalle del usuario: {$id}";
+})->where('id','[0-9]+');
+
+Route::get('/saludo/{name}/{nickname?}',function($name,$nickname=null){
+    if ($nickname){
+        return "Hola {$name}, tu nick es {$nickname}";
+    }
+    else{
+        return "Hola {$name}, no tienes nick";
+    }
+});
+
+
+ 
