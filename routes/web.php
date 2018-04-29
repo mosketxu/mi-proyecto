@@ -29,12 +29,17 @@ Route::get('/usuarios/{id}', function($id){
     return "Mostrando detalle del usuario: {$id}";
 })->where('id','[0-9]+');
 
+Route::get('/usuarios/{id}/edit', function($id){
+    return "Editando detalle del usuario: {$id}";
+})->where('id','[0-9]+');
+
 Route::get('/saludo/{name}/{nickname?}',function($name,$nickname=null){
+    $name=ucFirst($name);
     if ($nickname){
         return "Hola {$name}, tu nick es {$nickname}";
     }
     else{
-        return "Hola {$name}, no tienes nick";
+        return "Hola {$name},";
     }
 });
 
