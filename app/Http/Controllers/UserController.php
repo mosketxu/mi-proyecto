@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+
 class UserController extends Controller
 {
     public function index(){
-        $users=[
-            'Joel',
-            'Alex',
-            'Juan',
-            '<script>alert("Clicker")</script>'
-        ];
-
+        if (request()->has('empty')){
+            $users=[];
+        }
+        else{
+            $users=['Joel','Alex','Juan'];
+        }
         // opcion típica de pasar datos
 /*         return view('users',[
             'users' => $users,
@@ -29,14 +29,16 @@ class UserController extends Controller
 }
 
     public function show($id){
-        return "Mostrando detalle del usuario: {$id}";
+        return view('show',['id'=>$id]);
     }
 
     public function create(){
-        return 'Crear nuevo usuario';
+        return view('create');
+        // return 'Crear nuevo usuario';
     } 
 
     public function edit($id){
-        return "Editando detalle del usuario: {$id}";
+        return view('edit',['id'=>$id]);
+        // return "Editando detalle del usuario: {$id}";
     }
 }
