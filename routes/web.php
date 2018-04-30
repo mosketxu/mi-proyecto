@@ -16,32 +16,18 @@ Route::get('/', function () {
    return 'Home';
 });
 
-Route::get('/usuarios', function () {
-    // return view('welcome');
-    return 'Usuarios ';
- });
+Route::get('/usuarios', 'UserController@index');
 
-Route::get('/usuarios/nuevo', function () {
-    return 'Crear nuevo usuario';
-});
+Route::get('/usuarios/nuevo', 'UserController@create');
 
-Route::get('/usuarios/{id}', function($id){
-    return "Mostrando detalle del usuario: {$id}";
-})->where('id','[0-9]+');
+Route::get('/usuarios/{id}', 'UserController@show')
+    ->where('id','[0-9]+');
 
-Route::get('/usuarios/{id}/edit', function($id){
-    return "Editando detalle del usuario: {$id}";
-})->where('id','[0-9]+');
+Route::get('/usuarios/{id}/edit', 'UserController@edit')
+    ->where('id','[0-9]+');
 
-Route::get('/saludo/{name}/{nickname?}',function($name,$nickname=null){
-    $name=ucFirst($name);
-    if ($nickname){
-        return "Hola {$name}, tu nick es {$nickname}";
-    }
-    else{
-        return "Hola {$name},";
-    }
-});
+Route::get('/saludo/{name}','WelcomeUserController@nameWithoutNick');
 
+Route::get('/saludo/{name}/{nickname}','WelcomeUserController@nameWithNick');
 
  
