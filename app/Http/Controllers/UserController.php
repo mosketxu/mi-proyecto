@@ -25,20 +25,21 @@ class UserController extends Controller
         // dd(compact('title','users'));
 
         $title= 'Listado de Usuarios';
-        return view('users',compact('title','users'));
+        return view('users.index',compact('title','users'));
 }
 
     public function show($id){
-        return view('show',['id'=>$id]);
+        // return view('show',['id'=>$id]);
+        return view('users.show',compact('id'));
     }
 
     public function create(){
-        return view('create');
+        return view('users.create');
         // return 'Crear nuevo usuario';
     } 
 
     public function edit($id){
-        return view('edit',['id'=>$id]);
-        // return "Editando detalle del usuario: {$id}";
+        // return view('edit',['id'=>$id]);
+        return view('users.edit',compact('id'));
     }
 }
