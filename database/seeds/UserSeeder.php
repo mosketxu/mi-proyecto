@@ -66,7 +66,30 @@ class UserSeeder extends Seeder
         // Si creo la tabla con otro nombre , pe en Professions como myProfessions debo escribir la siguiente sentencia en el modelo Professions
         // protected $table='myProfessions";
         // lo dejo comentado en el modelo como ejemplo
-        User::create([
+
+        // User::create([
+        //     'name'=>'Alex Arregui',
+        //     'email'=>'mosketxu@gmail.com',
+        //     'password'=>bcrypt('laravel'),
+        //     'profession_id'=>$professionId,
+        //     'is_admin'=>true
+        // ]);
+
+                // User::create([
+        //     'name'=>'Segundo Usuario',
+        //     'email'=>'segundo@gmail.com',
+        //     'password'=>bcrypt('laravel'),
+        //     'profession_id'=>$professionId
+        // ]);
+
+        // User::create([
+        //     'name'=>'tercer Usuario',
+        //     'email'=>'tercer@gmail.com',
+        //     'password'=>bcrypt('laravel'),
+        //     'profession_id'=>null
+        // ]);
+
+        factory(User::class)->create([
             'name'=>'Alex Arregui',
             'email'=>'mosketxu@gmail.com',
             'password'=>bcrypt('laravel'),
@@ -74,20 +97,17 @@ class UserSeeder extends Seeder
             'is_admin'=>true
         ]);
 
-        User::create([
-            'name'=>'Segundo Usuario',
-            'email'=>'segundo@gmail.com',
-            'password'=>bcrypt('laravel'),
-            'profession_id'=>$professionId
-        ]);
 
-        User::create([
-            'name'=>'tercer Usuario',
-            'email'=>'tercer@gmail.com',
-            'password'=>bcrypt('laravel'),
-            'profession_id'=>null
-        ]);
+        // crea un usuario con la profession de la vble $professionId creada arriba
+        factory(User::class)->create([
+            'profession_id'=>$professionId,
+        ]); 
 
+        // crea un usuario sin profession
+        factory(User::class)->create(); 
+
+        //creo 40 usuarios aleatorios
+        factory(User::class,48)->create(); 
 
     }
 }
