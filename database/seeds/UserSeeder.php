@@ -1,5 +1,7 @@
 <?php
 
+use App\User;
+use App\Profession;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -35,15 +37,32 @@ class UserSeeder extends Seeder
         //     ->where('title','Desarrollador Back-end')
         //     ->value('id');
 
-        $professionId=DB::table('professions')
+        // Sin Eloquent
+/*         $professionId=DB::table('professions')
              ->whereTitle('Desarrollador Back-end')
              ->value('id');
+ */
+        // Sin Eloquent
+        // DB::table('users')->insert([
+        //     'name'=>'Alex Arregui',
+        //     'email'=>'mosketxu@gmail.com',
+        //     'password'=>bcrypt('laravel'),
+        //     // 'profession_id'=>$professionId
+        // ]);
 
-        DB::table('users')->insert([
+        // Con Eloquent
+
+        $professionId=\App\Profession::where('title','Desarrollador Back-end')->value('id');
+
+        //no paso el nombre del la tabla porque el modelo tiene la convencion para que lo encuentre. Se llama User en mayuscula
+        // Si creo la tabla con otro nombre , pe en Professions como myProfessions debo escribir la siguiente sentencia en el modelo Professions
+        // protected $table='myProfessions";
+        // lo dejo comentado en el modelo como ejemplo
+        User::create([
             'name'=>'Alex Arregui',
             'email'=>'mosketxu@gmail.com',
             'password'=>bcrypt('laravel'),
-            // 'profession_id'=>$professionId
+            'profession_id'=>$professionId
         ]);
     }
 }
