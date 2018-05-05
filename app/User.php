@@ -37,10 +37,15 @@ class User extends Authenticatable
         return static::where(compact('email'))->first();
     }
 
+    public function profession(){ 
+        // si respeto la nomenclatura de Laravel/Eloquent lo relaciona buscando una comlumna que se llame profession_id en la tabla users
+        return $this->belongsTo(Profession::class);
+        // si no hay campo profession_id hay que enviar el campo en la sentencia
+        // return $this->belongsTo(Profession::class,'nombreDelCampo');
+        
+    }    
+
     public function isAdmin(){
-        return $this->email==='mosketxu@gmail.com';
+        return $this->is_admin ;
     }
-
-
-
 }

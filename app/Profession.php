@@ -18,4 +18,8 @@ class Profession extends Model
     //como ejemplo en User tenemos protected $fillable = ['name', 'email', 'password',];
 
     protected $fillable=['title'];
+
+    public function users(){
+        return $this->hasMany(User::class);
+    }
 }

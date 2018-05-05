@@ -70,14 +70,22 @@ class UserSeeder extends Seeder
             'name'=>'Alex Arregui',
             'email'=>'mosketxu@gmail.com',
             'password'=>bcrypt('laravel'),
+            'profession_id'=>$professionId,
+            'is_admin'=>true
+        ]);
+
+        User::create([
+            'name'=>'Segundo Usuario',
+            'email'=>'segundo@gmail.com',
+            'password'=>bcrypt('laravel'),
             'profession_id'=>$professionId
         ]);
 
         User::create([
-            'name'=>'Otro Usuario',
-            'email'=>'no@gmail.com',
+            'name'=>'tercer Usuario',
+            'email'=>'tercer@gmail.com',
             'password'=>bcrypt('laravel'),
-            'profession_id'=>$professionId
+            'profession_id'=>null
         ]);
 
 
