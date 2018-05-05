@@ -26,4 +26,17 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    public static function findByEmail($email){
+        // Es equivalente poner User y poner Static porque estoy en el modelo User
+        // return User::where(compact('email'))->first();
+        return static::where(compact('email'))->first();
+    }
+
+    public function isAdmin(){
+        return $this->email==='mosketxu@gmail.com';
+    }
+
+
+
 }

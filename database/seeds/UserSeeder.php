@@ -52,7 +52,15 @@ class UserSeeder extends Seeder
 
         // Con Eloquent
 
-        $professionId=\App\Profession::where('title','Desarrollador Back-end')->value('id');
+        // $professionId=\App\Profession::where('title','Desarrollador Back-end')->value('id');
+        $professionId=Profession::where('title','Desarrollador Back-end')->value('id');
+
+
+        // Podemos retonar un resultado dependiendo de su id mediante el método find():
+        // $profession = Profession::find(1);
+        	
+        // $professions= App\Profession::all();
+        // dd($professions);
 
         //no paso el nombre del la tabla porque el modelo tiene la convencion para que lo encuentre. Se llama User en mayuscula
         // Si creo la tabla con otro nombre , pe en Professions como myProfessions debo escribir la siguiente sentencia en el modelo Professions
@@ -64,5 +72,14 @@ class UserSeeder extends Seeder
             'password'=>bcrypt('laravel'),
             'profession_id'=>$professionId
         ]);
+
+        User::create([
+            'name'=>'Otro Usuario',
+            'email'=>'no@gmail.com',
+            'password'=>bcrypt('laravel'),
+            'profession_id'=>$professionId
+        ]);
+
+
     }
 }
