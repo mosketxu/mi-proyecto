@@ -24,7 +24,11 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','created_at','updated_at',
+    ];
+
+    protected $casts=[
+        'is_admin'=>'boolean'       //sin hacer esto, el mysql crea el campo is_admin como tinyInt
     ];
 
     public static function findByEmail($email){

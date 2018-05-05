@@ -12,4 +12,10 @@ class Profession extends Model
     // ademas añadir la siguiente sentencia, ya que sino Laravel los busca al ser una exension de Eloquent
 
     // public $timestamps=false;
+
+    //si no pongo la siguiente instruccion a la hora de intentar crear un registro desde un model me daría error
+    //se ponen sólo los campos que permitimos rellenar.
+    //como ejemplo en User tenemos protected $fillable = ['name', 'email', 'password',];
+
+    protected $fillable=['title'];
 }
