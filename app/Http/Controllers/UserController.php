@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
-use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\DB; como no uso el constructor de consultas sino eloquent no me hace falta el facade DB
 
 
 class UserController extends Controller
 {
     public function index(){
-        if (request()->has('empty')){
-            $users=[];
-        }
-        else{
+        // if (request()->has('empty')){
+        //     $users=[];
+        // }
+        // else{
             // $users= DB::table('users')->get();
             $users=User::all();    
-    }
+    // }
         // opcion típica de pasar datos
 /*         return view('users',[
             'users' => $users,

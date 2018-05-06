@@ -96,10 +96,6 @@ class UserSeeder extends Seeder
             'profession_id'=>$professionId,
             'is_admin'=>true
         ]);
-        //Usuario con nombre Joel para que funcione el test
-        factory(User::class)->create([
-            'name'=>'Joel',
-        ]); 
 
         // crea un usuario con la profession de la vble $professionId creada arriba
         factory(User::class)->create([
