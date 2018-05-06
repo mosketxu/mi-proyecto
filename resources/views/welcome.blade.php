@@ -1,4 +1,27 @@
-<!doctype html>
+@extends('layout')
+
+@section('title',"Home")
+
+@section('content')
+    <h1> {{ $title }} </h1>
+    
+    {{-- <ul>
+        @forelse($users as $user)
+            <li> {{ $user->name }} </li>
+        @empty
+            <li>No hay usuarios registrados</li>
+        @endforelse
+    </ul> --}}
+
+@endsection
+
+{{-- @section('sidebar')
+    @parent
+    <h3>otra side bar</h3>
+@endsection --}}
+
+
+{{-- <!doctype html>
 <html lang="{{ app()->getLocale() }}">
     <head>
         <meta charset="utf-8">
@@ -92,4 +115,4 @@
             </div>
         </div>
     </body>
-</html>
+</html> --}}

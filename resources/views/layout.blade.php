@@ -26,11 +26,11 @@
                 <div class="col-8">
                         @yield('content')
                 </div>
-                <div class="col-4">
+                {{-- <div class="col-4">
                     @section('sidebar')
                         <h2>Barra Lateral</h2>
                     @show
-                </div>
+                </div> --}}
             </div>
         </main>
 

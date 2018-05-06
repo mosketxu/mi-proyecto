@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\User;
+use Illuminate\Support\Facades\DB;
 
 
 class UserController extends Controller
@@ -12,8 +14,9 @@ class UserController extends Controller
             $users=[];
         }
         else{
-            $users=['Joel','Alex','Juan'];
-        }
+            // $users= DB::table('users')->get();
+            $users=User::all();    
+    }
         // opcion típica de pasar datos
 /*         return view('users',[
             'users' => $users,
@@ -25,6 +28,10 @@ class UserController extends Controller
         // dd(compact('title','users'));
 
         $title= 'Listado de Usuarios';
+        // return view('users.index')
+        //     ->with('users',User::all())
+        //     ->with('title','Listado de usuarios con otro title');
+        
         return view('users.index',compact('title','users'));
 }
 
