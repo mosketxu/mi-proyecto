@@ -11,22 +11,30 @@
 |
 */
 
-Route::get('/', 'WelcomeController@index');
+Route::get('/', 'WelcomeController@index')
+    ->name('welcome');
 
-Route::get('/welcome', 'WelcomeController@index');
+    // Route::get('/welcome', 'WelcomeController@index');
+
+Route::get('/saludo/{name}/{nickname}','WelcomeUserController@nameWithNick')
+    ->name('welcome.withNick');
   
-Route::get('/usuarios', 'UserController@index');
+Route::get('/usuarios', 'UserController@index')
+    ->name('users');
 
-Route::get('/usuarios/nuevo', 'UserController@create');
+Route::get('/usuarios/nuevo', 'UserController@create')
+    ->name('users.create');
 
 Route::get('/usuarios/{id}', 'UserController@show')
-    ->where('id','[0-9]+');
+    ->where('id','[0-9]+')
+    ->name('users.show');
 
 Route::get('/usuarios/{id}/edit', 'UserController@edit')
-    ->where('id','[0-9]+');
+    ->where('id','[0-9]+')
+    ->name('users.edit');
 
-Route::get('/saludo/{name}','WelcomeUserController@nameWithoutNick');
+Route::get('/saludo/{name}','WelcomeUserController@nameWithoutNick')
+    ->name('welcome.withOutNick');
 
-Route::get('/saludo/{name}/{nickname}','WelcomeUserController@nameWithNick');
 
  
