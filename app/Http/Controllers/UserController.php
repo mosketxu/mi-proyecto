@@ -56,13 +56,17 @@ class UserController extends Controller
         return view('users.show',compact('user')); 
     }
 
+    public function edit($id){
+        // return view('edit',['id'=>$id]);
+        return view('users.edit',compact('id'));
+    }
     public function create(){
         return view('users.create'); 
         // return 'Crear nuevo usuario';
     } 
 
-    public function edit($id){
-        // return view('edit',['id'=>$id]);
-        return view('users.edit',compact('id'));
-    }
+    public function store(){
+        return 'Procesando información...'; 
+    } 
+    
 }

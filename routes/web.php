@@ -20,10 +20,13 @@ Route::get('/saludo/{name}/{nickname}','WelcomeUserController@nameWithNick')
     ->name('welcome.withNick');
   
 Route::get('/usuarios', 'UserController@index')
-    ->name('users');
+    ->name('users.index');
 
 Route::get('/usuarios/nuevo', 'UserController@create')
-    ->name('users.create');
+     ->name('users.nuevo');
+
+Route::post('/usuarios/crear','UserController@store')
+    ->name('users.crear');
 
 // Route::get('/usuarios/{id}', 'UserController@show')
 // Modificamos la ruta con el nombre de la funcion del controlador para usar laravel en el controlador
