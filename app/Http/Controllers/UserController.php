@@ -35,12 +35,14 @@ class UserController extends Controller
         return view('users.index',compact('title','users'));
 }
 
-    public function show($id){
+    // public function show($id){ // la manera habitual pero Laravel lo mejora con la siguiente sentecia pero hay que corregir las rutas
+    public function show(User $user){ // recuerda corregir las rutas
         // return view('show',['id'=>$id]);
 
         // exit('linea no alcanzada');
 
-        $user=User::findOrFail($id);
+        // lo quito si uso el metodo de laravel en la funcion y modifico la ruta
+        // $user=User::findOrFail($id);
         // dd($user);
 /*      Como uso el metodo findOrFail en lugar del metodo fins no hace falta el condicional
         
@@ -50,6 +52,7 @@ class UserController extends Controller
            return response()->view('errors.404',[],404); //el segundo argumento son los datos pero no hay en este caso. El tercero el error que quiero mostrar,i.e, 404
         }
  */
+        // dd($user);
         return view('users.show',compact('user')); 
     }
 

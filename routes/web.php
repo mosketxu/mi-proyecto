@@ -25,8 +25,11 @@ Route::get('/usuarios', 'UserController@index')
 Route::get('/usuarios/nuevo', 'UserController@create')
     ->name('users.create');
 
-Route::get('/usuarios/{id}', 'UserController@show')
-    ->where('id','[0-9]+')
+// Route::get('/usuarios/{id}', 'UserController@show')
+// Modificamos la ruta con el nombre de la funcion del controlador para usar laravel en el controlador
+    Route::get('/usuarios/{user}', 'UserController@show')
+    // ->where('id','[0-9]+')
+    ->where('user','[0-9]+')
     ->name('users.show');
 
 Route::get('/usuarios/{id}/edit', 'UserController@edit')
