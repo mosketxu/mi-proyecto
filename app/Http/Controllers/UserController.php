@@ -37,9 +37,19 @@ class UserController extends Controller
 
     public function show($id){
         // return view('show',['id'=>$id]);
-        $user=User::find($id);
-        // dd($user);
 
+        // exit('linea no alcanzada');
+
+        $user=User::findOrFail($id);
+        // dd($user);
+/*      Como uso el metodo findOrFail en lugar del metodo fins no hace falta el condicional
+        
+        exit('linea no alcanzada');
+
+        if ($user==null){
+           return response()->view('errors.404',[],404); //el segundo argumento son los datos pero no hay en este caso. El tercero el error que quiero mostrar,i.e, 404
+        }
+ */
         return view('users.show',compact('user')); 
     }
 
