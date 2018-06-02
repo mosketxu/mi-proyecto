@@ -56,17 +56,35 @@ class UserController extends Controller
         return view('users.show',compact('user')); 
     }
 
-    public function edit($id){
+    public function edit(User $user){
         // return view('edit',['id'=>$id]);
-        return view('users.edit',compact('id'));
+        return view('users.edit',['user'=>$user]);
     }
+    
     public function create(){
         return view('users.create'); 
         // return 'Crear nuevo usuario';
     } 
 
-    public function store(){
-        return 'Procesando información...'; 
+    public function store()
+    {
+        $data=request()->validate([
+            'name'=>'required',
+            'email'=>'required|email|unique:users,email',
+            'password'=>'required','min:6'
+        ],[
+            'name.required'=>'El campo nombre es obligatorio',
+            'email.required',
+            'password.required',
+        ]);
+
+        User::create([
+            'name'=>$data['name'],
+            'email'=>$data['email'],
+            'password'=>bcrypt($data['password'])
+        ]);
+        
+        return redirect()->route('users.index');
     } 
     
 }
