@@ -56,11 +56,6 @@ class UserController extends Controller
         return view('users.show',compact('user')); 
     }
 
-    public function edit(User $user){
-        // return view('edit',['id'=>$id]);
-        return view('users.edit',['user'=>$user]);
-    }
-    
     public function create(){
         return view('users.create'); 
         // return 'Crear nuevo usuario';
@@ -86,5 +81,24 @@ class UserController extends Controller
         
         return redirect()->route('users.index');
     } 
+
+    public function edit(User $user){
+        // return view('edit',['id'=>$id]);
+        return view('users.edit',['user'=>$user]);
+    }
     
+    public function update(User $user){ 
+        $data=request()->all();
+
+        $data['password']=bcrypt($data['password']);
+
+        $user->update($data);
+
+        // return view('edit',['id'=>$id]);
+        // return view('users.edit',['user'=>$user]);
+        //return redirect("usuarios/{$user->id}");
+        return redirect()->route('users.show',['user'=>$user]);
+    }
+    
+
 }

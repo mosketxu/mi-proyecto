@@ -23,13 +23,17 @@ Route::post('/usuarios','UserController@store')
     // ->where('id','[0-9]+')
     // ->name('users.show');
 
-    Route::get('/usuarios/{user}', 'UserController@show')
+Route::get('/usuarios/{user}', 'UserController@show')
     ->where('user','[0-9]+')
     ->name('users.show');
     
 Route::get('/usuarios/{user}/editar', 'UserController@edit')
-    ->where('id','[0-9]+')
+    ->where('user','[0-9]+')
     ->name('users.edit');
+
+Route::put('/usuarios/{user}', 'UserController@update')
+    ->where('user','[0-9]+')
+    ->name('users.update');
 
 Route::get('/saludo/{name}','WelcomeUserController@nameWithoutNick')
     ->name('welcome.withOutNick');

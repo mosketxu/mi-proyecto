@@ -119,6 +119,29 @@ class UsersModuleTest extends TestCase
     }
 
     /** @test */
+    function it_updates_a_user()
+    {
+        $this->withoutExceptionHandling();
+
+        $user=factory(User::class)->create();
+
+        $this->put("/usuarios/{$user->id}",[
+            'name'=>'alex',
+            'email'=>'alexa@alex.com',
+            'password'=>'123456'
+            ])->assertRedirect("/usuarios/{$user->id}");
+            // ->assertRedirect(route('users.index',));
+
+        $this->assertCredentials([
+            'name'=>'alex',
+            'email'=>'alexa@alex.com',
+            'password'=>'123456'
+        ]);
+
+    }
+
+   
+    /** @test */
     function the_name_is_required()
     {
         // $this->withoutExceptionHandling();
