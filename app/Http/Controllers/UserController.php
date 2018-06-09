@@ -94,13 +94,13 @@ class UserController extends Controller
         $data=request()->validate([
             'name'=>'required',
             'email'=>'required|email',
-            'password'=>'required',
+            'password'=>'',
         ]);
 
 		if ($data['password'] != null){
 			$data['password']=bcrypt($data['password']);
 		} else {
-			unset($data['password']);
+			unset($data['password']);  //quita el indice de arrat asocitivo de $data, es decir no lo valida
 		}
 
         $user->update($data);

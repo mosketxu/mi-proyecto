@@ -18,7 +18,6 @@ class UsersModuleTest extends TestCase
         //Usuario con nombre Joel y Carlos para que funcione el test
         factory(User::class)->create([
             'name'=>'Joel',
-            // 'website'=>'miweb.com',
         ]);
 
         factory(User::class)->create([
@@ -244,6 +243,7 @@ class UsersModuleTest extends TestCase
 
         $this->assertEquals(0,User::count());
     }
+
     /** @test */
     function the_password_has_six_char_or_more()
     {
@@ -315,20 +315,26 @@ class UsersModuleTest extends TestCase
 
     
     /** @test */
-    function the_password_is_required_when_updating_a_user()
-    {
-        $user=factory(User::class)->create();
+    function the_password_is_optional_when_updating_a_user(){ 
+        $oldPassword="clave_antigua";
+
+        $user=factory(User::class)->create([
+            'password'=>bcrypt($oldPassword)
+        ]);
         
-        $this->from("usuarios/{$user->id}/editar")
+        $this->from("usuarios/{$user->id}/editar") 
             ->put("usuarios/{$user->id}",[
                 'name'=>'alex',
                 'email'=>'alex@alex.com',
                 'password'=>''
             ])
-            ->assertRedirect("usuarios/{$user->id}/editar")
-            ->assertSessionHasErrors(['password']);
+            ->assertRedirect("usuarios/{$user->id}") ;//users.show
 
-        $this->assertDatabaseMissing('users',['email'=>'alex@alex.com']);
+        $this->assertCredentials([
+            'name'=>'alex',
+            'email'=>'alex@alex.com',
+            'password'=>$oldPassword, //muy importante
+        ]);
     }
 
     /** @test */
@@ -336,8 +342,6 @@ class UsersModuleTest extends TestCase
     {
         self::markTestIncomplete();
         return;
-
-        
 
         $this->from('usuarios/nuevo')
             ->post('/usuarios/',[
