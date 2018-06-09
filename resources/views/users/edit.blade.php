@@ -15,8 +15,8 @@
     </div>
     @endif
 
-    {{-- <form class="needs-validation" novalidate method="POST" action="{{ url("usuarios/{$user->id}") }}"> --}}
-    <form method="POST" action="{{ url("usuarios/{$user->id}") }}">
+    <form class="needs-validation" novalidate method="POST" action="{{ url("usuarios/{$user->id}") }}">
+    {{--  <form method="POST" action="{{ url("usuarios/{$user->id}") }}">  --}}
 
         {{ method_field('PUT') }}     
         {{ csrf_field() }}
@@ -42,7 +42,8 @@
                 <div class="invalid-feedback">Please choose a valid email.</div>
             </div>
             <label for="password" id="password">Password:</label>
-            <input type="password" name="password" class="form-control" required aria-describedby="passwordHelpBlock" >
+            {{--  en este form el password no lo doy como requerido, pero si lo relleno debe cumplir las condiciones  --}}
+            <input type="password" name="password" class="form-control"  aria-describedby="passwordHelpBlock" >
             <small id="passwordHelpBlock" class="form-text text-muted">
                 Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
             </small>
