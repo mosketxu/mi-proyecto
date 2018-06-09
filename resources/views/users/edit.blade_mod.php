@@ -7,19 +7,19 @@
     @if ($errors->any())
     <div class="alert alert-danger">
         <h6>Por favor, corrige los errores:</h6>
-        {{-- <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach    
-        </ul>     --}}
+        <ul>
+			@foreach($errors->all() as $error)
+				<li>{{ $error }}</li>
+			@endforeach    
+        </ul>
     </div>
     @endif
 
-    {{-- <form class="needs-validation" novalidate method="POST" action="{{ url("usuarios/{$user->id}") }}"> --}}
-    <form method="POST" action="{{ url("usuarios/{$user->id}") }}">
+    <form method="POST" action="{{ url("usuarios/{user->id}") }}">
+	<form method="POST" action="{{ url("usuarios/{$user->id}") }}">
 
-        {{ method_field('PUT') }}     
-        {{ csrf_field() }}
+        { method_field('PUT') }     
+        { csrf_field() } 
         <div class="form-group">
             <label for="name" id="name">Nombre:</label>
             <input type="text" class="form-control" name="name" placeholder="Alex Arregui" required value="{{ old('name', $user->name) }} ">

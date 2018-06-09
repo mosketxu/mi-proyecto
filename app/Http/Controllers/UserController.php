@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\User;
 // use Illuminate\Support\Facades\DB; como no uso el constructor de consultas sino eloquent no me hace falta el facade DB
 
-
 class UserController extends Controller
 {
     public function index(){
@@ -73,6 +72,7 @@ class UserController extends Controller
             'password.required',
         ]);
 
+        
         User::create([
             'name'=>$data['name'],
             'email'=>$data['email'],
@@ -88,16 +88,25 @@ class UserController extends Controller
     }
     
     public function update(User $user){ 
-        $data=request()->all();
 
-        $data['password']=bcrypt($data['password']);
+        // dd('actualizar usuario');
+        
+        $data=request()->validate([
+            'name'=>'required',
+            'email'=>'required|email',
+            'password'=>'required',
+        ]);
+
+		if ($data['password'] != null){
+			$data['password']=bcrypt($data['password']);
+		} else {
+			unset($data['password']);
+		}
 
         $user->update($data);
 
-        // return view('edit',['id'=>$id]);
-        // return view('users.edit',['user'=>$user]);
-        //return redirect("usuarios/{$user->id}");
         return redirect()->route('users.show',['user'=>$user]);
+        // return redirect()->route('users.index');
     }
     
 

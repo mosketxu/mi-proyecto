@@ -32,7 +32,7 @@ Route::get('/usuarios/{user}/editar', 'UserController@edit')
     ->name('users.edit');
 
 Route::put('/usuarios/{user}', 'UserController@update')
-    ->where('user','[0-9]+')
+->where('user','[0-9]+')
     ->name('users.update');
 
 Route::get('/saludo/{name}','WelcomeUserController@nameWithoutNick')
