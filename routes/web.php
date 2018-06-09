@@ -35,7 +35,8 @@ Route::put('/usuarios/{user}', 'UserController@update')
     ->where('user','[0-9]+')
     ->name('users.update');
 
-Route::delete('/usuarios/{user}', 'UserController@destroy');
+Route::delete('/usuarios/{user}', 'UserController@destroy')
+    ->name('users.destroy');
     
 
 Route::get('/saludo/{name}','WelcomeUserController@nameWithoutNick')

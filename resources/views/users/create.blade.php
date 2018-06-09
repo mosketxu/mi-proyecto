@@ -22,22 +22,22 @@
         {!!csrf_field()!!} 
         <div class="form-group">
             <label for="name" id="name">Nombre:</label>
-            <input type="text" class="form-control" name="name" placeholder="Alex Arregui" required value={{ old('name') }} >
+            <input type="text" class="form-control" name="name" placeholder="nombre usuario" required value={{ old('name') }} >
             <div class="valid-feedback">Looks good!</div>
             <div class="invalid-feedback">Please choose a name.</div>
-        @if ($errors->has('name'))
+            {{--  @if ($errors->has('name'))
                 <p>{{ $errors->first('name')}}</p>
-            @endif
+            @endif  --}}
             <label for="email" id="email">email:</label>
-            @if ($errors->has('email'))
+            {{--  @if ($errors->has('email'))
                 <p>{{ $errors->first('email')}}</p>
-            @endif
+            @endif  --}}
 
             <div class="input-group mb-2 mr-sm-2">
                 <div class="input-group-prepend">
                     <div class="input-group-text">@</div>
                 </div>
-                <input type="email" class="form-control" name="email" placeholder="alex@example.com" required value={{ old('email') }} >
+                <input type="email" class="form-control" name="email" placeholder="email@example.com" required value={{ old('email') }} >
                 <div class="valid-feedback">Looks good!</div>
                 <div class="invalid-feedback">Please choose a valid email.</div>
             </div>
