@@ -245,23 +245,6 @@ class UsersModuleTest extends TestCase
     }
 
     /** @test */
-    function the_password_has_six_char_or_more()
-    {
-        self::markTestIncomplete();
-        return;
-
-        $this->from('usuarios/nuevo')
-            ->post('/usuarios/',[
-                'name'=>'alex',
-                'email'=>'alex@alex.com',
-                'password'=>'12345'
-            ])
-            ->assertRedirect('usuarios/nuevo')
-            ->assertSessionHasErrors(['password']);
-
-        $this->assertEquals(0,User::count());
-    }
-    /** @test */
     function the_name_is_required_when_updating_a_user()
     {
         // $this->withoutExceptionHandling();
@@ -382,21 +365,21 @@ class UsersModuleTest extends TestCase
         ]);
     }
 
-    /** @test */
-    function the_password_has_six_char_or_more_when_updating_a_user()
-    {
-        self::markTestIncomplete();
-        return;
+    /** @test **/
+    function it_deletes_a_user(){
+        $this->withoutExceptionHandling();
 
-        $this->from('usuarios/nuevo')
-            ->post('/usuarios/',[
-                'name'=>'alex',
-                'email'=>'alex@alex.com',
-                'password'=>'12345'
-            ])
-            ->assertRedirect('usuarios/nuevo')
-            ->assertSessionHasErrors(['password']);
+        $user=factory(User::class)->create();
 
-        $this->assertEquals(0,User::count());
+        $this->delete("usuarios/{$user->id}")
+            ->assertRedirect('usuarios');
+
+        $this->assertDatabaseMissing('users',[
+            'id'=>$user->id,
+        ]);             
+
+        // otra forma de validar
+        // $this->assertSame(0,User::count()); //creo un usuario y luego lo elimino, así que el contador es el mismo
     }
+
 }
