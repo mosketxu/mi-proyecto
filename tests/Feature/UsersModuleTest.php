@@ -313,7 +313,52 @@ class UsersModuleTest extends TestCase
         $this->assertEquals(0,User::count());
     }
 
+    /** @test */
+    function the_email_can_stay_the_same_when_updating_a_user(){ 
+
+        $user=factory(User::class)->create([
+            'email'=>'alex@alex.com'
+        ]);
+        
+        $this->from("usuarios/{$user->id}/editar") 
+            ->put("usuarios/{$user->id}",[
+                'name'=>'alex a',
+                'email'=>'alex@alex.com',
+                'password'=>'12345678'
+            ])
+            ->assertRedirect("usuarios/{$user->id}") ;//users.show
+
+        $this->assertDatabaseHas('users',[
+            'name'=>'alex a',
+            'email'=>'alex@alex.com',
+        ]);
+    }
     
+        /** @test */
+    function the_email_must_be_unique_when_updating_the_user()
+    {
+        // $this->withoutExceptionHandling();
+
+        factory(User::class)->create([
+            'email'=>'existing-email@example.com', 
+        ]);
+
+        $user=factory(User::class)->create([
+            'email'=>'alex@alex.com'
+        ]);
+
+        $this->from("usuarios/{$user->id}/editar")
+            ->put("usuarios/{$user->id}",[
+                'name'=>'alex',
+                'email'=>'existing-email@example.com',
+                'password'=>'123456'
+            ])
+            ->assertRedirect("usuarios/{$user->id}/editar")
+            ->assertSessionHasErrors(['email']);
+        
+        //
+    }
+
     /** @test */
     function the_password_is_optional_when_updating_a_user(){ 
         $oldPassword="clave_antigua";

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Validation\Rule;
+
 // use Illuminate\Support\Facades\DB; como no uso el constructor de consultas sino eloquent no me hace falta el facade DB
 
 class UserController extends Controller
@@ -93,8 +95,10 @@ class UserController extends Controller
         
         $data=request()->validate([
             'name'=>'required',
-            'email'=>'required|email',
-            'password'=>'',
+            // 'email'=>'required|email|unique:users,email,'.$user->id,  // en unique los parametros vienen por comas: primero la tabla, luego la columna y luego el ide del usuario que queremos excluir de la validacion
+            // desde Laravel 5.3 puedo definir la reglas con sintaxis orientada a objetos
+            'email'=>['required','email',Rule::unique('users')->ignore($user->id)], // si el nombre del campo del array coincide con el de la columna lo puedo quitar, sino sería como sigue: Rule::unique('users','email',)->ignore($user->id)]
+            'password'=>'nullable|min:6',
         ]);
 
 		if ($data['password'] != null){
