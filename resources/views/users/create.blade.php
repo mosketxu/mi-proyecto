@@ -1,62 +1,66 @@
 @extends('layout')
 
-@section('title',"Crear nuevo usuario")
+@section('title',"Crear usuario")
 @section('content')
-    <h1>Crear nuevo usuario</h1>
 
-    @if ($errors->any())
-    <div class="alert alert-danger">
-        <h6>Por favor, corrige los errores:</h6>
-        {{-- <ul>
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach    
-        </ul>     --}}
-    </div>
-    @endif
-
-    <form class="needs-validation" novalidate method="POST" action="{{route('users.crear')}}">
-    {{-- <form method="POST" action="{{url('usuarios/crear')}}"> --}}
-    {{-- <form method="POST" action="{{url('usuarios')}}"> --}}
-                {{-- {!!csrf_field()!!}  es el token para evitar que nos hagan post desde sitios de terceros. Es seguridad --}}
-        {!!csrf_field()!!} 
-        <div class="form-group">
-            <label for="name" id="name">Nombre:</label>
-            <input type="text" class="form-control" name="name" placeholder="nombre usuario" required value={{ old('name') }} >
-            <div class="valid-feedback">Looks good!</div>
-            <div class="invalid-feedback">Please choose a name.</div>
-            {{--  @if ($errors->has('name'))
-                <p>{{ $errors->first('name')}}</p>
-            @endif  --}}
-            <label for="email" id="email">email:</label>
-            {{--  @if ($errors->has('email'))
-                <p>{{ $errors->first('email')}}</p>
-            @endif  --}}
-
-            <div class="input-group mb-2 mr-sm-2">
-                <div class="input-group-prepend">
-                    <div class="input-group-text">@</div>
-                </div>
-                <input type="email" class="form-control" name="email" placeholder="email@example.com" required value={{ old('email') }} >
-                <div class="valid-feedback">Looks good!</div>
-                <div class="invalid-feedback">Please choose a valid email.</div>
+    <div class="card">
+        <h4 class="card-header">
+            Crear usuario
+        </h4>
+        <div class="card-body">
+            @if ($errors->any())
+            <div class="alert alert-danger">
+                <h6>Por favor, corrige los errores:</h6>
+                {{-- <ul>
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach    
+                </ul>     --}}
             </div>
-            <label for="password" id="password">Password:</label>
-            <input type="password" name="password" class="form-control" required aria-describedby="passwordHelpBlock" >
-            <small id="passwordHelpBlock" class="form-text text-muted">
-                Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
-            </small>
-            <div class="valid-feedback">Looks good!</div>
-            <div class="invalid-feedback">Please choose a valid password.</div>
-        <button type="submit" class="btn btn-primary">Crear usuario</button>
+            @endif
+            
+            <form class="needs-validation" novalidate method="POST" action="{{route('users.crear')}}">
+            {{-- <form method="POST" action="{{url('usuarios/crear')}}"> --}}
+            {{-- <form method="POST" action="{{url('usuarios')}}"> --}}
+                {{-- {!!csrf_field()!!}  es el token para evitar que nos hagan post desde sitios de terceros. Es seguridad --}}
+                {!!csrf_field()!!} 
+                <div class="form-group">
+                    <label for="name" id="name">Nombre:</label>
+                    <input type="text" class="form-control" name="name" placeholder="nombre usuario" required value={{ old('name') }} >
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose a name.</div>
+                    {{--  @if ($errors->has('name'))
+                    <p>{{ $errors->first('name')}}</p>
+                    @endif  --}}
+                    <label for="email" id="email">email:</label>
+                    {{--  @if ($errors->has('email'))
+                    <p>{{ $errors->first('email')}}</p>
+                    @endif  --}}
+                    
+                    <div class="input-group mb-2 mr-sm-2">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">@</div>
+                        </div>
+                        <input type="email" class="form-control" name="email" placeholder="email@example.com" required value={{ old('email') }} >
+                        <div class="valid-feedback">Looks good!</div>
+                        <div class="invalid-feedback">Please choose a valid email.</div>
+                    </div>
+                    <label for="password" id="password">Password:</label>
+                    <input type="password" name="password" class="form-control" required aria-describedby="passwordHelpBlock" >
+                    <small id="passwordHelpBlock" class="form-text text-muted">
+                        Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+                    </small>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose a valid password.</div>
+                    <button type="submit" class="btn btn-primary">Crear usuario</button>
+                    {{-- <a href="{{url()->previous()}}">Volver</a> --}}
+                    {{-- <a href="{{url('/usuarios')}}">Volver al listado de usuarios</a> --}}
+                    {{-- <a href="{{action('UserController@index')}}">Volver al listado de usuarios</a> --}}
+                    <a href="{{route('users.index')}}" class="btn btn-link">Volver al listado de usuarios</a>
+                </div>
+            </form>
         </div>
-    </form>
-
-    {{-- <a href="{{url()->previous()}}">Volver</a> --}}
-    {{-- <a href="{{url('/usuarios')}}">Volver al listado de usuarios</a> --}}
-    {{-- <a href="{{action('UserController@index')}}">Volver al listado de usuarios</a> --}}
-    <a href="{{route('users.index')}}">Volver al listado de usuarios</a>
-
+    </div>
 @endsection
 
 <script>
