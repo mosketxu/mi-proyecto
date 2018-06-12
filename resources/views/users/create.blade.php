@@ -25,6 +25,7 @@
                 {{-- {!!csrf_field()!!}  es el token para evitar que nos hagan post desde sitios de terceros. Es seguridad --}}
                 {!!csrf_field()!!} 
                 <div class="form-group">
+
                     <label for="name" id="name">Nombre:</label>
                     <input type="text" class="form-control" name="name" placeholder="nombre usuario" required value={{ old('name') }} >
                     <div class="valid-feedback">Looks good!</div>
@@ -32,6 +33,7 @@
                     {{--  @if ($errors->has('name'))
                     <p>{{ $errors->first('name')}}</p>
                     @endif  --}}
+
                     <label for="email" id="email">email:</label>
                     {{--  @if ($errors->has('email'))
                     <p>{{ $errors->first('email')}}</p>
@@ -45,6 +47,7 @@
                         <div class="valid-feedback">Looks good!</div>
                         <div class="invalid-feedback">Please choose a valid email.</div>
                     </div>
+
                     <label for="password" id="password">Password:</label>
                     <input type="password" name="password" class="form-control" required aria-describedby="passwordHelpBlock" >
                     <small id="passwordHelpBlock" class="form-text text-muted">
@@ -52,6 +55,18 @@
                     </small>
                     <div class="valid-feedback">Looks good!</div>
                     <div class="invalid-feedback">Please choose a valid password.</div>
+
+                    <label for="bio" id="bio">bio:</label>
+                    <textarea class="form-control" name="bio" placeholder="tu biografia" required >{{ old('bio') }}</textarea>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please us tell something about you.</div>
+
+                    <label for="twitter" id="twitter">twitter:</label>
+                    <input type="text" class="form-control" name="twitter" placeholder="tu ciuenta de twitter"  value={{ old('twitter') }} >
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose a url.</div>
+
+
                     <button type="submit" class="btn btn-primary">Crear usuario</button>
                     {{-- <a href="{{url()->previous()}}">Volver</a> --}}
                     {{-- <a href="{{url('/usuarios')}}">Volver al listado de usuarios</a> --}}

@@ -54,35 +54,19 @@ class UsersModuleTest extends TestCase
     }
 
     /** @test */
-    function it_loads_the_new_users_page()
-    {
-        $this->get('/usuarios/nuevo')
-            ->assertStatus(200)
-            ->assertSee('Crear usuario');
-    }
-
-    /** @test */
-    function it_loads_the_edit_users_page()
-    {
-        $this->withoutExceptionHandling();
-
-        $user=factory(User::class)->create();
-
-        $this->get("/usuarios/{$user->id}/editar") //usuarios/5/editar OJO COMILLAS DOBLES
-            ->assertStatus(200)
-            ->assertViewIs('users.edit')
-            ->assertSee("Editando detalle del usuario: $user->name")
-            ->assertViewHas('user',function ($viewUser) use ($user) {
-                return $viewUser->id=== $user->id;
-            });
-    }
-
-    /** @test */
     function it_displays_a_404_error_if_the_user_is_not_found()
     {
         $this->get('/usuarios/999')
             ->assertStatus(404)
             ->assertSee('Página no encontrada');
+    }
+    
+    /** @test */
+    function it_loads_the_new_users_page()
+    {
+        $this->get('/usuarios/nuevo')
+            ->assertStatus(200)
+            ->assertSee('Crear usuario');
     }
 
     /** @test */
@@ -99,7 +83,9 @@ class UsersModuleTest extends TestCase
         $this->post('/usuarios/',[
             'name'=>'Alex',
             'email'=>'alexa@alex.com',
-            'password'=>'123456'
+            'password'=>'123456',
+            'bio'=>'Programador de Laravel y Vue.js',
+            'twitter'=>'https://twitter.com/alexarregui',
             ])->assertRedirect(route('users.index'));
 
         // $this->assertDatabaseHas('users',[
@@ -114,7 +100,29 @@ class UsersModuleTest extends TestCase
             'password'=>'123456'
         ]);
 
+        $this->assertDatabaseHas('user_profiles',[
+            'bio'=>'Programador de Laravel y Vue.js',
+            'twitter'=>'https://twitter.com/alexarregui',
+            'user_id' => User::findByEmail('alexa@alex.com')->id,
+        ]);
     }
+    
+    /** @test */
+    function it_loads_the_edit_users_page()
+    {
+        $this->withoutExceptionHandling();
+
+        $user=factory(User::class)->create();
+
+        $this->get("/usuarios/{$user->id}/editar") //usuarios/5/editar OJO COMILLAS DOBLES
+            ->assertStatus(200)
+            ->assertViewIs('users.edit')
+            ->assertSee("Editando detalle del usuario: $user->name")
+            ->assertViewHas('user',function ($viewUser) use ($user) {
+                return $viewUser->id=== $user->id;
+            });
+    }
+
 
     /** @test */
     function it_updates_a_user()

@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB; //me hace falta para el metodo createUSer
 
 class User extends Authenticatable
 {
@@ -31,6 +32,33 @@ class User extends Authenticatable
         'is_admin'=>'boolean'       //sin hacer esto, el mysql crea el campo is_admin como tinyInt
     ];
 
+    public static function createUser($data){
+        DB::transaction(function()use ($data) {
+            $user = User::create([
+                'name'=>$data['name'],
+                'email'=>$data['email'],
+                'password'=>bcrypt($data['password'])
+            ]);
+            
+            //si lo hago creando la relacion en la migracion create_user_profiles_table
+            // UserProfile::create([
+            //     'bio'=> $data['bio'],
+            //     'twitter'=> $data['twitter'],
+            //     'user_id'=> $user->id,  
+            // ]);
+    
+            //si lo hago creando la relacion en el modelo User con la funcion profile()
+            //No hace falta que cree la llave foránea
+            $user->profile()->create([
+                'bio'=> $data['bio'],
+                'twitter'=> $data['twitter'],
+                // 'user_id'=> $user->id,  // De esta manera no tengo que indicar este campo porque Eloquent lo va a hacer por mi. 
+            ]);
+    
+        });
+        
+    }
+    
     public static function findByEmail($email){
         // Es equivalente poner User y poner Static porque estoy en el modelo User
         // return User::where(compact('email'))->first();
@@ -43,7 +71,12 @@ class User extends Authenticatable
         // si no hay campo profession_id hay que enviar el campo en la sentencia
         // return $this->belongsTo(Profession::class,'nombreDelCampo');
         
-    }    
+    }
+    
+    // cero la relacion entre User (estoy en el modelo ya) y UserProfile indicandole que el user tiene un perfil 
+    public function profile(){
+        return $this->hasOne(UserProfile::class);
+    }
 
     public function isAdmin(){
         return $this->is_admin ;

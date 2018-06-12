@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\User;
+// use App\User;
+// use App\UserProfile;
+// uso mejor notacion de PHP 7
+use App\{User, UserProfile};
 use Illuminate\Validation\Rule;
 
-// use Illuminate\Support\Facades\DB; como no uso el constructor de consultas sino eloquent no me hace falta el facade DB
+//use Illuminate\Support\Facades\DB; //si no no uso el constructor de consultas sino eloquent no me hace falta el facade DB. Pero lo uso en store para el rollback de las transacciones pero como me lo he llevado al modelo User lo vuelvo a comentar
 
 class UserController extends Controller
 {
@@ -67,20 +70,45 @@ class UserController extends Controller
         $data=request()->validate([
             'name'=>'required',
             'email'=>'required|email|unique:users,email',
-            'password'=>'required','min:6'
+            'password'=>'required','min:6',
+            'bio'=>'required', //para validar esto hacer una prueba con TDD
+            'twitter'=>'nullable|url', //para validar esto hacer una prueba con TDD
         ],[
             'name.required'=>'El campo nombre es obligatorio',
             'email.required',
             'password.required',
         ]);
 
-        
-        User::create([
-            'name'=>$data['name'],
-            'email'=>$data['email'],
-            'password'=>bcrypt($data['password'])
-        ]);
-        
+        // si meto toda la logica de la transaccion dentro de DB::transaction, podré hacer un rollback. Aunque el codigo queda un poco feo. Así que creare un nuevo metodo (despues de comentado)
+//        DB::transaction(function()use ($data) {
+//            $user = User::create([
+//                'name'=>$data['name'],
+//                'email'=>$data['email'],
+//                'password'=>bcrypt($data['password'])
+//            ]);
+//            
+//            //si lo hago creando la relacion en la migracion create_user_profiles_table
+//            // UserProfile::create([
+//            //     'bio'=> $data['bio'],
+//            //     'twitter'=> $data['twitter'],
+//            //     'user_id'=> $user->id,  
+//            // ]);
+//    
+//            //si lo hago creando la relacion en el modelo User con la funcion profile()
+//            //No hace falta que cree la llave foránea
+//            $user->profile()->create([
+//                'bio'=> $data['bio'],
+//                'twitter'=> $data['twitter'],
+//                // 'user_id'=> $user->id,  // De esta manera no tengo que indicar este campo porque Eloquent lo va a hacer por mi. 
+//                'github'=>'https://github.com/mosketxu',
+//            ]);
+//    
+//        });
+
+        // Creo un nuevo metodo en el modelo User para dejar todo el codigo de arriba limpio
+
+        User::createUser($data);
+
         return redirect()->route('users.index');
     } 
 
