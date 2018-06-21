@@ -80,15 +80,21 @@ class UsersModuleTest extends TestCase
         
         $this->withoutExceptionHandling();
 
-        $this->post('/usuarios/',[
-            'name'=>'Alex',
-            'email'=>'alexa@alex.com',
-            'password'=>'123456',
-            'bio'=>'Programador de Laravel y Vue.js',
-            'twitter'=>'https://twitter.com/alexarregui',
-            ])->assertRedirect(route('users.index'));
+        //Para no repetir código y que quede todo más limpio
+        // me llevo lo comentado siguiente a una funcion en este mismo fichero llamada getValidData al final
 
-        // $this->assertDatabaseHas('users',[
+        // $this->post('/usuarios/',[
+        //     'name'=>'Alex',
+        //     'email'=>'alexa@alex.com',
+        //     'password'=>'123456',
+        //     'bio'=>'Programador de Laravel y Vue.js',
+        //     'twitter'=>'https://twitter.com/alexarregui',
+        //     ])->assertRedirect(route('users.index'));
+
+        $this->post('/usuarios', $this->getValidData())->assertRedirect(route('users.index'));;
+
+
+            // $this->assertDatabaseHas('users',[
         //     'name'=>'Alex',
         //     'email'=>'alexa@alex.com',
         //     'password'=>'123456'
@@ -106,6 +112,39 @@ class UsersModuleTest extends TestCase
             'user_id' => User::findByEmail('alexa@alex.com')->id,
         ]);
     }
+
+        /** @test */
+        function the_twitter_field_is_optional()
+        {
+            $this->withoutExceptionHandling();
+    
+            // $this->post('/usuarios/',[
+            //     'name'=>'Alex',
+            //     'email'=>'alexa@alex.com',
+            //     'password'=>'123456',
+            //     'bio'=>'Programador de Laravel y Vue.js',
+            //     // 'twitter'=>null, tengo que ver qué pasa no solo si es null, sino tambien que pasa si no lo envío
+            //     ])->assertRedirect(route('users.index'));
+    
+            // en lugar de lo de arriba uso el metodo getValidData definido al final
+            // asegurandome que paso el campo de twitter en null
+            $this->post('/usuarios/',$this->getValidData([
+                'twitter'=>null,
+            ]))->assertRedirect(route('users.index'));
+
+            $this->assertCredentials([
+                'name'=>'Alex',
+                'email'=>'alexa@alex.com',
+                'password'=>'123456'
+            ]);
+    
+            $this->assertDatabaseHas('user_profiles',[
+                'bio'=>'Programador de Laravel y Vue.js',
+                'twitter'=>null,
+                'user_id' => User::findByEmail('alexa@alex.com')->id,
+            ]);
+        }
+    
     
     /** @test */
     function it_loads_the_edit_users_page()
@@ -169,28 +208,26 @@ class UsersModuleTest extends TestCase
         // $this->withoutExceptionHandling();
 
         $this->from('usuarios/nuevo')
-            ->post('/usuarios/',[
+            ->post('/usuarios/',$this->getValidData([
                 'name'=>'',
-                'email'=>'alexa@alex.com',
-                'password'=>'123456'
-            ])
+            ]))
             ->assertRedirect('usuarios/nuevo')
             ->assertSessionHasErrors(['name'=>'El campo nombre es obligatorio']);
 
-        $this->assertDatabaseMissing('users',[
-            'email'=>'alexa@alex.com',
-        ]);
+        // susituyo lo siguiente por la funcion assertDatabaseEmpty que he añadido en tests/TestCase.php
+        // $this->assertDatabaseMissing('users',[
+        //     'email'=>'alexa@alex.com',
+        // ]);
+        $this->assertDatabaseEmpty('users');
     }
 
     /** @test */
     function the_email_is_required()
     {
         $this->from('usuarios/nuevo')
-            ->post('/usuarios/',[
-                'name'=>'alex',
+            ->post('/usuarios/',$this->getValidData([
                 'email'=>'',
-                'password'=>'123456'
-            ])
+            ]))
             ->assertRedirect('usuarios/nuevo')
             ->assertSessionHasErrors(['email']);
 
@@ -225,31 +262,50 @@ class UsersModuleTest extends TestCase
             'email'=>'alex@alex.com'
         ]);
 
+        // $this->from('usuarios/nuevo')
+        //     ->post('/usuarios/',[
+        //         'name'=>'alex',
+        //         'email'=>'alex@alex.com',
+        //         'password'=>'123456'
+        //     ])
+        //     ->assertRedirect('usuarios/nuevo')
+        //     ->assertSessionHasErrors(['email']);
+
+        //con getValidData
         $this->from('usuarios/nuevo')
-            ->post('/usuarios/',[
-                'name'=>'alex',
-                'email'=>'alex@alex.com',
-                'password'=>'123456'
-            ])
-            ->assertRedirect('usuarios/nuevo')
-            ->assertSessionHasErrors(['email']);
-        
-        $this->assertEquals(1,User::count());
+        ->post('/usuarios/',$this->getValidData([
+            'email'=>'alex@alex.com',
+        ]))
+        ->assertRedirect('usuarios/nuevo')
+        ->assertSessionHasErrors(['email']);
+
+        $this->assertEquals(1,User::count()); //aqui no puedo usar la funcion assertDatabaseEmpty('users'); porque la cuenta debe ser 1, no estar vacia
     }
     
     /** @test */
     function the_password_is_required()
     {
+        // $this->from('usuarios/nuevo')
+        //     ->post('/usuarios/',[
+        //         'name'=>'alex',
+        //         'email'=>'alex@alex.com',
+        //         'password'=>''
+        //     ])
+        //     ->assertRedirect('usuarios/nuevo')
+        //     ->assertSessionHasErrors(['password']);
+
+        // con el metodo getValidData
         $this->from('usuarios/nuevo')
-            ->post('/usuarios/',[
-                'name'=>'alex',
-                'email'=>'alex@alex.com',
-                'password'=>''
-            ])
+            ->post('/usuarios/',$this->getvalidData([
+                'password'=>"",
+            ]))
             ->assertRedirect('usuarios/nuevo')
             ->assertSessionHasErrors(['password']);
 
-        $this->assertEquals(0,User::count());
+        // sustituyo la verifiacion por la de assertDatabaseEmpty
+        // $this->assertEquals(0,User::count());
+        $this->assertDatabaseEmpty('users');
+
     }
 
     /** @test */
@@ -294,11 +350,9 @@ class UsersModuleTest extends TestCase
     function the_email_must_be_valid_when_updating_a_user()
     {
         $this->from('usuarios/nuevo')
-            ->post('/usuarios/',[
-                'name'=>'alex',
+            ->post('/usuarios/',$this->getValidData([
                 'email'=>'correo-no-valido',
-                'password'=>'123456'
-            ])
+            ]))
             ->assertRedirect('usuarios/nuevo')
             ->assertSessionHasErrors(['email']);
         $this->assertEquals(0,User::count());
@@ -374,7 +428,8 @@ class UsersModuleTest extends TestCase
     }
 
     /** @test **/
-    function it_deletes_a_user(){
+    function it_deletes_a_user()
+    {
         $this->withoutExceptionHandling();
 
         $user=factory(User::class)->create();
@@ -382,7 +437,7 @@ class UsersModuleTest extends TestCase
         $this->delete("usuarios/{$user->id}")
             ->assertRedirect('usuarios');
 
-        $this->assertDatabaseMissing('users',[
+        $this->assertDatabaseMissing('users', [
             'id'=>$user->id,
         ]);             
 
@@ -390,4 +445,33 @@ class UsersModuleTest extends TestCase
         // $this->assertSame(0,User::count()); //creo un usuario y luego lo elimino, así que el contador es el mismo
     }
 
+    // /**
+    //  * @return array
+    //  */
+
+    // protected function getValidData():array
+    // {
+    //     return[
+    //         'name'=>'Alex',
+    //         'email'=>'alexa@alex.com',
+    //         'password'=>'123456',
+    //         'bio'=>'Programador de Laravel y Vue.js',
+    //         'twitter'=>'https://twitter.com/alexarregui',
+    //     ];
+    // }
+
+    // si quiero la posibilidad de modificar algunos datos o eliminarlos lo hago de la siguiente manera
+    protected function getValidData(array $custom=[])
+        {
+        // array_filter filtra los campos que son null. De esta manera, si el campo de twitter es null lo elimino por completo
+        // array_merge combina los atributos  que envío a la función con lo que tengo predefinidos
+        // dando prioridad a los $custom
+        return array_filter(array_merge([
+            'name'=>'Alex',
+            'email'=>'alexa@alex.com',
+            'password'=>'123456',
+            'bio'=>'Programador de Laravel y Vue.js',
+            'twitter'=>'https://twitter.com/alexarregui',
+        ], $custom));
+    }
 }

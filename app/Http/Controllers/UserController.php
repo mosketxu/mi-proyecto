@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 // uso mejor notacion de PHP 7
 use App\{User, UserProfile};
 use Illuminate\Validation\Rule;
+use App\Http\Requests\CreateUserRequest;
 
 //use Illuminate\Support\Facades\DB; //si no no uso el constructor de consultas sino eloquent no me hace falta el facade DB. Pero lo uso en store para el rollback de las transacciones pero como me lo he llevado al modelo User lo vuelvo a comentar
 
@@ -65,20 +66,28 @@ class UserController extends Controller
         // return 'Crear nuevo usuario';
     } 
 
-    public function store()
+    // public function store()  //sin el form request
+    public function store(CreateUserRequest $request)
     {
-        $data=request()->validate([
-            'name'=>'required',
-            'email'=>'required|email|unique:users,email',
-            'password'=>'required','min:6',
-            'bio'=>'required', //para validar esto hacer una prueba con TDD
-            'twitter'=>'nullable|url', //para validar esto hacer una prueba con TDD
-        ],[
-            'name.required'=>'El campo nombre es obligatorio',
-            'email.required',
-            'password.required',
-        ]);
+        // si no uso FormRequest
+        // $data=request()->validate([
+        //     'name'=>'required',
+        //     'email'=>'required|email|unique:users,email',
+        //     'password'=>'required','min:6',
+        //     'bio'=>'required', //para validar esto hacer una prueba con TDD
+        //     'twitter'=>'nullable|url', //para validar esto hacer una prueba con TDD
+        // ],[
+        //     'name.required'=>'El campo nombre es obligatorio',
+        //     'email.required',
+        //     'password.required',
+        // ]);
 
+//        $request->save(); // con el FormRequest no me hace falta lo de arriba. LLamo al metodo save y si ha funcionado
+                          // tambien llama al metodo User::createUser($data) pero solo si lo ha pasado
+                            // quito la llamada a User::createUser($data) de unas lineas mas abao
+
+        $request->createUser();  //cambio el nombre del metodo save() a createUser() y asi meteré la logica de creacion directamente en él
+        
         // si meto toda la logica de la transaccion dentro de DB::transaction, podré hacer un rollback. Aunque el codigo queda un poco feo. Así que creare un nuevo metodo (despues de comentado)
 //        DB::transaction(function()use ($data) {
 //            $user = User::create([
@@ -107,7 +116,7 @@ class UserController extends Controller
 
         // Creo un nuevo metodo en el modelo User para dejar todo el codigo de arriba limpio
 
-        User::createUser($data);
+        // User::createUser($data); lo quito porque lo llamo desde el formrequest 
 
         return redirect()->route('users.index');
     } 

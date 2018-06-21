@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\DB; //me hace falta para el metodo createUSer
+// use Illuminate\Support\Facades\DB; //me hace falta para el metodo createUSer pero como lo he quitado no me hace falta
 
 class User extends Authenticatable
 {
@@ -29,35 +29,36 @@ class User extends Authenticatable
     ];
 
     protected $casts=[
-        'is_admin'=>'boolean'       //sin hacer esto, el mysql crea el campo is_admin como tinyInt
+        'is_admin'=>'boolean'   //sin hacer esto, el mysql crea el campo is_admin como tinyInt
     ];
 
-    public static function createUser($data){
-        DB::transaction(function()use ($data) {
-            $user = User::create([
-                'name'=>$data['name'],
-                'email'=>$data['email'],
-                'password'=>bcrypt($data['password'])
-            ]);
+    // me llevo la logica de creacion de usuario al formRequest
+    // public static function createUser($data){
+    //     DB::transaction(function()use ($data) {
+    //         $user = User::create([
+    //             'name'=>$data['name'],
+    //             'email'=>$data['email'],
+    //             'password'=>bcrypt($data['password'])
+    //         ]);
             
-            //si lo hago creando la relacion en la migracion create_user_profiles_table
-            // UserProfile::create([
-            //     'bio'=> $data['bio'],
-            //     'twitter'=> $data['twitter'],
-            //     'user_id'=> $user->id,  
-            // ]);
+    //         //si lo hago creando la relacion en la migracion create_user_profiles_table
+    //         // UserProfile::create([
+    //         //     'bio'=> $data['bio'],
+    //         //     'twitter'=> $data['twitter'],
+    //         //     'user_id'=> $user->id,  
+    //         // ]);
     
-            //si lo hago creando la relacion en el modelo User con la funcion profile()
-            //No hace falta que cree la llave foránea
-            $user->profile()->create([
-                'bio'=> $data['bio'],
-                'twitter'=> $data['twitter'],
-                // 'user_id'=> $user->id,  // De esta manera no tengo que indicar este campo porque Eloquent lo va a hacer por mi. 
-            ]);
+    //         //si lo hago creando la relacion en el modelo User con la funcion profile()
+    //         //No hace falta que cree la llave foránea
+    //         $user->profile()->create([
+    //             'bio'=> $data['bio'],
+    //             'twitter'=> $data['twitter'],
+    //             // 'user_id'=> $user->id,  // De esta manera no tengo que indicar este campo porque Eloquent lo va a hacer por mi. 
+    //         ]);
     
-        });
+    //     });
         
-    }
+    // }
     
     public static function findByEmail($email){
         // Es equivalente poner User y poner Static porque estoy en el modelo User
