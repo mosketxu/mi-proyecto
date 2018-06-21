@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\User;
+use App\Profession;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,6 +12,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class UsersModuleTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected $profession;
 
     /** @test */
     function it_shows_the_users_list()
@@ -93,6 +96,8 @@ class UsersModuleTest extends TestCase
 
         $this->post('/usuarios', $this->getValidData())->assertRedirect(route('users.index'));;
 
+        // dd(User::all());
+        // dd(User::first());
 
             // $this->assertDatabaseHas('users',[
         //     'name'=>'Alex',
@@ -103,7 +108,8 @@ class UsersModuleTest extends TestCase
         $this->assertCredentials([
             'name'=>'Alex',
             'email'=>'alexa@alex.com',
-            'password'=>'123456'
+            'password'=>'123456',
+            'profession_id'=>$this->profession->id,
         ]);
 
         $this->assertDatabaseHas('user_profiles',[
@@ -144,7 +150,31 @@ class UsersModuleTest extends TestCase
                 'user_id' => User::findByEmail('alexa@alex.com')->id,
             ]);
         }
+
+    /** @test */
+    function the_profession_field_is_optional()
+        {
+            $this->withoutExceptionHandling();
     
+            // asegurandome que paso el campo de profession_id en null
+            $this->post('/usuarios/',$this->getValidData([
+                'profession_id'=>null,
+            ]))->assertRedirect(route('users.index'));
+
+            $this->assertCredentials([
+                'name'=>'Alex',
+                'email'=>'alexa@alex.com',
+                'password'=>'123456',
+                'profession_id'=>null // en el caso twitter estaba en la siguiente assert
+            ]);
+    
+            $this->assertDatabaseHas('user_profiles',[
+                'bio'=>'Programador de Laravel y Vue.js',
+                //'twitter'=>null, // ojo hay que quitar esto de aqui porque no estoy validando Twiter sino profession_id, y además esta en a tabla users no en la tabla profiles, asi que lo pongo arriba
+                'user_id' => User::findByEmail('alexa@alex.com')->id,
+            ]);
+        }
+        
     
     /** @test */
     function it_loads_the_edit_users_page()
@@ -309,6 +339,74 @@ class UsersModuleTest extends TestCase
     }
 
     /** @test */
+    function the_profession_must_be_valid()
+    {
+        // $this->withoutExceptionHandling();
+        $this->withExceptionHandling(); // es lo mismo que comentar la linea de arriba y ya esta
+        // intento crear una profesion que no exista en la base de datos
+        // con el metodo getValidData
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/',$this->getvalidData([
+                'profession_id'=>"999", 
+            ]))
+            ->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['profession_id']);
+
+        // $this->assertEquals(0,User::count());
+        $this->assertDatabaseEmpty('users');
+
+    }
+    
+   /** @test */
+   function only_selectable_professions_are_valid()
+   {
+        $nonselectableProfession= factory(Profession::class)->create([
+            'selectable'=> false,
+        ]);
+
+        $this->handleValidationExceptions(); // es lo mismo que $this->withoutExceptionHandling();
+    // intento crear una profesion que no exista en la base de datos
+    // con el metodo getValidData
+       $this->from('usuarios/nuevo')
+           ->post('/usuarios/',$this->getvalidData([
+               'profession_id'=>$nonselectableProfession->id, 
+           ]))
+           ->assertRedirect('usuarios/nuevo')
+           ->assertSessionHasErrors(['profession_id']);
+
+       // $this->assertEquals(0,User::count());
+       $this->assertDatabaseEmpty('users');
+
+   }
+
+   /** @test */
+   function only_not_deleted_profession_can_be_selected()
+   {
+    
+        // Usando el metodo softDelete es decir en lugar de borrar marco como borrado pero no lo borro de la BBDD
+        // para ello debo añadir el campo deleted_at a la base de datos en la migraction y al modelo tambien
+    
+        $deletedProfession  = factory(Profession::class)->create([
+            'deleted_at'=> now()->format('Y.m.d'),  //una profesion eliminada tendría una fecha en el campo deleted_at, una no eliminada tendría este campo como null
+        ]);
+
+        $this->handleValidationExceptions(); // es lo mismo que $this->withoutExceptionHandling();
+    // intento crear una profesion que no exista en la base de datos
+    // con el metodo getValidData
+       $this->from('usuarios/nuevo')
+           ->post('/usuarios/',$this->getvalidData([
+               'profession_id'=>$deletedProfession->id, 
+           ]))
+           ->assertRedirect('usuarios/nuevo')
+           ->assertSessionHasErrors(['profession_id']);
+
+       // $this->assertEquals(0,User::count());
+       $this->assertDatabaseEmpty('users');
+
+   }
+
+
+    /** @test */
     function the_name_is_required_when_updating_a_user()
     {
         // $this->withoutExceptionHandling();
@@ -462,7 +560,10 @@ class UsersModuleTest extends TestCase
 
     // si quiero la posibilidad de modificar algunos datos o eliminarlos lo hago de la siguiente manera
     protected function getValidData(array $custom=[])
-        {
+    {
+
+        $this->profession = factory(Profession::class)->create(); // para poder usar esto tengo que declarar la propiedad $profession de la clase al principio del fichero como una propiedad protected
+            
         // array_filter filtra los campos que son null. De esta manera, si el campo de twitter es null lo elimino por completo
         // array_merge combina los atributos  que envío a la función con lo que tengo predefinidos
         // dando prioridad a los $custom
@@ -470,6 +571,7 @@ class UsersModuleTest extends TestCase
             'name'=>'Alex',
             'email'=>'alexa@alex.com',
             'password'=>'123456',
+            'profession_id'=>$this->profession->id, 
             'bio'=>'Programador de Laravel y Vue.js',
             'twitter'=>'https://twitter.com/alexarregui',
         ], $custom));
