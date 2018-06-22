@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\User;
 use Illuminate\Support\Facades\DB; //me hace falta para el metodo createUser que he traido del modelo User
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class CreateUserRequest extends FormRequest
@@ -31,18 +31,15 @@ class CreateUserRequest extends FormRequest
             'email'=>'required|email|unique:users,email',
             'password'=>'required','min:6',
             'bio'=>'required', //para validar esto hacer una prueba con TDD
-            'twitter'=>'nullable|url', //para validar esto hacer una prueba con TDD
-            // Duilio lo escribe como sigue pero no funciona
-            // 'twitter'=>['nullable|url'], //para validar esto hacer una prueba con TDD
+            //'twitter'=>'nullable|url', //para validar esto hacer una prueba con TDD
+             'twitter'=>['nullable','url'], //para validar esto hacer una prueba con TDD
             //'profession_id'=>'', //si dejo esta linea así cuando ejecuto la prueba da un error de base de datos, pero quiero atajar el error antes así que pongo la siguiente linea
             // 'profession_id'=>'exists:professions,id',  // para añadir una condicion de que solo pueda seleccionar profesiones selecccionables siguiente línea con sintaxis nueva para cosas mas complejas
             // indico que quiero que la profession este presente en el campo id  la tabla professions
             // y que ademas sea selectable
-            'profession_id'=>Rule::exists('professions','id')->where('selectable',true), //si no pongo el where falla la prueba only_selectable_professions_are_valid
+            // 'profession_id'=>Rule::exists('professions','id')->where('selectable',true), //si no pongo el where falla la prueba only_selectable_professions_are_valid
             // si ademas quiero que solo se puedan seleccionar las que no están borradas con el softDelete
             'profession_id'=>Rule::exists('professions','id')->where('selectable',true)->whereNull('deleted_at'), //si no pongo el where falla la prueba only_selectable_professions_are_valid
-
-
         ];
     }
 

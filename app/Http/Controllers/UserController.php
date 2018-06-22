@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 // use App\User;
 // use App\UserProfile;
 // uso mejor notacion de PHP 7
-use App\{User, UserProfile};
+use App\{User, UserProfile, Profession};
 use Illuminate\Validation\Rule;
 use App\Http\Requests\CreateUserRequest;
 
@@ -62,7 +62,10 @@ class UserController extends Controller
     }
 
     public function create(){
-        return view('users.create'); 
+
+        $professions= Profession::OrderBy('title','ASC')->get(); // pongo use proffesion al principio
+
+        return view('users.create',compact('professions')); 
         // return 'Crear nuevo usuario';
     } 
 
@@ -141,7 +144,7 @@ class UserController extends Controller
 		if ($data['password'] != null){
 			$data['password']=bcrypt($data['password']);
 		} else {
-			unset($data['password']);  //quita el indice de arrat asocitivo de $data, es decir no lo valida
+			unset($data['password']);  //quita el indice de arrat asociativo de $data, es decir no lo valida
 		}
 
         $user->update($data);

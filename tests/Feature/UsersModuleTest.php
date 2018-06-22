@@ -67,9 +67,14 @@ class UsersModuleTest extends TestCase
     /** @test */
     function it_loads_the_new_users_page()
     {
+        $profession=factory(Profession::class)->create();
+
         $this->get('/usuarios/nuevo')
             ->assertStatus(200)
-            ->assertSee('Crear usuario');
+            ->assertSee('Crear usuario')
+            ->assertViewHas('professions',function($professions) use ($profession){ //verifico que la vista tiene la variable profession y que es la que le estoy pasando aqui
+                return $professions->contains($profession);                                //si la funcion anonima retorna verdadero la prueba pasa, sino no pasa
+            });
     }
 
     /** @test */

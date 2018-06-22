@@ -11,11 +11,11 @@
             @if ($errors->any())
             <div class="alert alert-danger">
                 <h6>Por favor, corrige los errores:</h6>
-                {{-- <ul>
+                <ul>
                     @foreach($errors->all() as $error)
                     <li>{{ $error }}</li>
                     @endforeach    
-                </ul>     --}}
+                </ul>    
             </div>
             @endif
             
@@ -26,15 +26,15 @@
                 {!!csrf_field()!!} 
                 <div class="form-group">
 
-                    <label for="name" id="name">Nombre:</label>
-                    <input type="text" class="form-control" name="name" placeholder="nombre usuario" required value={{ old('name') }} >
+                    <label for="name" >Nombre:</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="nombre usuario" required value={{ old('name') }} >
                     <div class="valid-feedback">Looks good!</div>
                     <div class="invalid-feedback">Please choose a name.</div>
                     {{--  @if ($errors->has('name'))
                     <p>{{ $errors->first('name')}}</p>
                     @endif  --}}
 
-                    <label for="email" id="email">email:</label>
+                    <label for="email">email:</label>
                     {{--  @if ($errors->has('email'))
                     <p>{{ $errors->first('email')}}</p>
                     @endif  --}}
@@ -43,26 +43,38 @@
                         <div class="input-group-prepend">
                             <div class="input-group-text">@</div>
                         </div>
-                        <input type="email" class="form-control" name="email" placeholder="email@example.com" required value={{ old('email') }} >
+                        <input type="email" class="form-control" name="email"  id="email" placeholder="email@example.com" required value={{ old('email') }} >
                         <div class="valid-feedback">Looks good!</div>
                         <div class="invalid-feedback">Please choose a valid email.</div>
                     </div>
 
-                    <label for="password" id="password">Password:</label>
-                    <input type="password" name="password" class="form-control" required aria-describedby="passwordHelpBlock" >
+                    <label for="password" >Password:</label>
+                    <input type="password" name="password" class="form-control" id="password" required aria-describedby="passwordHelpBlock" >
                     <small id="passwordHelpBlock" class="form-text text-muted">
                         Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
                     </small>
                     <div class="valid-feedback">Looks good!</div>
                     <div class="invalid-feedback">Please choose a valid password.</div>
 
-                    <label for="bio" id="bio">bio:</label>
-                    <textarea class="form-control" name="bio" placeholder="tu biografia" required >{{ old('bio') }}</textarea>
+                    <label for="bio" >bio:</label>
+                    <textarea class="form-control" name="bio" id="bio" placeholder="tu biografia" required >{{ old('bio') }}</textarea>
                     <div class="valid-feedback">Looks good!</div>
                     <div class="invalid-feedback">Please us tell something about you.</div>
 
-                    <label for="twitter" id="twitter">twitter:</label>
-                    <input type="text" class="form-control" name="twitter" placeholder="tu ciuenta de twitter"  value={{ old('twitter') }} >
+                    <label for="profession_id" >Profesion:</label>
+                    <select class="form-control" name="profession_id" id="profession_id">
+                        <option value=""> Selecciona una profesión</option>
+                        {{-- @foreach (App\Profession::all() as $profession) // si queremos que este ordenado no puedo usar all, debo usar get --}}
+                        {{-- @foreach (App\Profession::OrderBy('title','ASC')->get() as $profession) // aunque mejor que aqui por limpieza y por si hago consultas mas complicadas lo llevo al metodo create de UserController --}}
+                        @foreach($professions as $profession)
+                             <option value={{$profession->id}}}> {{$profession->title}}</option> 
+                        @endforeach
+                    </select>
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please us tell something about you.</div>
+
+                    <label for="twitter" >twitter:</label>
+                    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="tu ciuenta de twitter"  value={{ old('twitter') }} >
                     <div class="valid-feedback">Looks good!</div>
                     <div class="invalid-feedback">Please choose a url.</div>
 
