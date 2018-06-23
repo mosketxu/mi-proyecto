@@ -39,7 +39,10 @@ class CreateUserRequest extends FormRequest
             // y que ademas sea selectable
             // 'profession_id'=>Rule::exists('professions','id')->where('selectable',true), //si no pongo el where falla la prueba only_selectable_professions_are_valid
             // si ademas quiero que solo se puedan seleccionar las que no están borradas con el softDelete
-            'profession_id'=>Rule::exists('professions','id')->where('selectable',true)->whereNull('deleted_at'), //si no pongo el where falla la prueba only_selectable_professions_are_valid
+            'profession_id'=>[
+                'nullable',
+                Rule::exists('professions','id')->where('selectable',true)->whereNull('deleted_at')
+            ], //si no pongo el where falla la prueba only_selectable_professions_are_valid
         ];
     }
 
