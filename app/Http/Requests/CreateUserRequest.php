@@ -32,6 +32,7 @@ class CreateUserRequest extends FormRequest
             'password'=>'required','min:6',
             'bio'=>'required', //para validar esto hacer una prueba con TDD
             //'twitter'=>'nullable|url', //para validar esto hacer una prueba con TDD
+            // 'twitter'=>['nullable','present','url'], //no pasan las pruebas si pongo 'present'
              'twitter'=>['nullable','url'], //para validar esto hacer una prueba con TDD
             //'profession_id'=>'', //si dejo esta linea así cuando ejecuto la prueba da un error de base de datos, pero quiero atajar el error antes así que pongo la siguiente linea
             // 'profession_id'=>'exists:professions,id',  // para añadir una condicion de que solo pueda seleccionar profesiones selecccionables siguiente línea con sintaxis nueva para cosas mas complejas
@@ -40,7 +41,7 @@ class CreateUserRequest extends FormRequest
             // 'profession_id'=>Rule::exists('professions','id')->where('selectable',true), //si no pongo el where falla la prueba only_selectable_professions_are_valid
             // si ademas quiero que solo se puedan seleccionar las que no están borradas con el softDelete
             'profession_id'=>[
-                'nullable',
+                'nullable', //'present', no pasan las pruebas si pongo present
                 Rule::exists('professions','id')->where('selectable',true)->whereNull('deleted_at')
             ], //si no pongo el where falla la prueba only_selectable_professions_are_valid
         ];
@@ -106,13 +107,13 @@ class CreateUserRequest extends FormRequest
                 'name'=>$data['name'],
                 'email'=>$data['email'],
                 'password'=>bcrypt($data['password']),
-                'profession_id'=>$data['profession_id'] ?? null,
+                'profession_id'=>$data['profession_id'] ?? null,  //si funcionara la regla present podría quitar el ?? null
             ]);
             
             $user->profile()->create([
                 'bio'=> $data['bio'],
                 // 'twitter'=> array_get($data, 'twitter'), uso la siguiente para ser consistente
-                'twitter'=> $data['twitter'] ?? null,
+                'twitter'=> $data['twitter'] ?? null,   //si funcionara la regla present podría quitar el ?? null
             ]);
         });
     }

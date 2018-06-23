@@ -67,14 +67,16 @@
                         {{-- @foreach (App\Profession::all() as $profession) // si queremos que este ordenado no puedo usar all, debo usar get --}}
                         {{-- @foreach (App\Profession::OrderBy('title','ASC')->get() as $profession) // aunque mejor que aqui por limpieza y por si hago consultas mas complicadas lo llevo al metodo create de UserController --}}
                         @foreach($professions as $profession)
-                             <option value={{$profession->id}}}> {{$profession->title}}</option> 
+                            <option value="{{ $profession->id }}"{{ old('profession_id') == $profession->id ? ' selected' :'' }}> 
+                                 {{$profession->title}}
+                            </option> 
                         @endforeach
                     </select>
                     <div class="valid-feedback">Looks good!</div>
                     <div class="invalid-feedback">Please us tell something about you.</div>
 
                     <label for="twitter" >twitter:</label>
-                    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="tu ciuenta de twitter"  value={{ old('twitter') }} >
+                    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="https://twitter.com/alexarregui"  value={{ old('twitter') }} >
                     <div class="valid-feedback">Looks good!</div>
                     <div class="invalid-feedback">Please choose a url.</div>
 
