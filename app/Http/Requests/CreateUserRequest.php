@@ -107,13 +107,14 @@ class CreateUserRequest extends FormRequest
                 'name'=>$data['name'],
                 'email'=>$data['email'],
                 'password'=>bcrypt($data['password']),
-                'profession_id'=>$data['profession_id'] ?? null,  //si funcionara la regla present podría quitar el ?? null
+                // 'profession_id'=>$data['profession_id'] ?? null,  //si funcionara la regla present podría quitar el ?? null. Me lo llevo a user profile
             ]);
             
             $user->profile()->create([
                 'bio'=> $data['bio'],
                 // 'twitter'=> array_get($data, 'twitter'), uso la siguiente para ser consistente
                 'twitter'=> $data['twitter'] ?? null,   //si funcionara la regla present podría quitar el ?? null
+                'profession_id'=>$data['profession_id'] ?? null,  //si funcionara la regla present podría quitar el ?? null. lo traigo de user
             ]);
         });
     }

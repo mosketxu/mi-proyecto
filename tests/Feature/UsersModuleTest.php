@@ -114,14 +114,15 @@ class UsersModuleTest extends TestCase
             'name'=>'Alex',
             'email'=>'alexa@alex.com',
             'password'=>'123456',
-            'profession_id'=>$this->profession->id,
+            // 'profession_id'=>$this->profession->id, // lo llevo a user_profiles
         ]);
 
         $this->assertDatabaseHas('user_profiles',[
             'bio'=>'Programador de Laravel y Vue.js',
             'twitter'=>'https://twitter.com/alexarregui',
             'user_id' => User::findByEmail('alexa@alex.com')->id,
-        ]);
+            'profession_id'=>$this->profession->id, // lo traigo de user
+            ]);
     }
 
         /** @test */
@@ -170,13 +171,14 @@ class UsersModuleTest extends TestCase
                 'name'=>'Alex',
                 'email'=>'alexa@alex.com',
                 'password'=>'123456',
-                'profession_id'=>null // en el caso twitter estaba en la siguiente assert
+                // 'profession_id'=>null // en el caso twitter estaba en la siguiente assert. Me lo llevo de a user_profiles
             ]);
     
             $this->assertDatabaseHas('user_profiles',[
                 'bio'=>'Programador de Laravel y Vue.js',
                 //'twitter'=>null, // ojo hay que quitar esto de aqui porque no estoy validando Twiter sino profession_id, y además esta en a tabla users no en la tabla profiles, asi que lo pongo arriba
                 'user_id' => User::findByEmail('alexa@alex.com')->id,
+                'profession_id'=>null // Lo traigo de a user
             ]);
         }
         

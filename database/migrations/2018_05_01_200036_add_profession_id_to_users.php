@@ -11,24 +11,27 @@ class AddProfessionIdToUsers extends Migration
      *
      * @return void
      */
-    public function up()
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedInteger('profession_id')->nullable();
-            $table->foreign('profession_id')->references('id')->on('professions');
-        });
-    }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign(['profession_id']);
-            $table->dropColumn('profession_id');
-        });
-    }
+    // Esta migracion la puedo eliminar. La dejo como ejemplo
+    // ya no sirve porque he llevado estos campos a la tabla userProfile
+    //  public function up()
+    // {
+    //     Schema::table('users', function (Blueprint $table) {
+    //         $table->unsignedInteger('profession_id')->nullable();
+    //         $table->foreign('profession_id')->references('id')->on('professions');
+    //     });
+    // }
+
+    // /**
+    //  * Reverse the migrations.
+    //  *
+    //  * @return void
+    //  */
+    // public function down()
+    // {
+    //     Schema::table('users', function (Blueprint $table) {
+    //         $table->dropForeign(['profession_id']);
+    //         $table->dropColumn('profession_id');
+    //     });
+    // }
 }

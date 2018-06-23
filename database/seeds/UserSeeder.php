@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
         // Con Eloquent
 
         // $professionId=\App\Profession::where('title','Desarrollador Back-end')->value('id');
-        $professionId=Profession::where('title','Desarrollador Back-end')->value('id');
+         $professionId=Profession::where('title','Desarrollador Back-end')->value('id');
 
 
         // Podemos retonar un resultado dependiendo de su id mediante el método find():
@@ -89,24 +89,37 @@ class UserSeeder extends Seeder
         //     'profession_id'=>null
         // ]);
 
-        factory(User::class)->create([
+        $user=factory(User::class)->create([
             'name'=>'Alex Arregui',
             'email'=>'mosketxu@gmail.com',
             'password'=>bcrypt('laravel'),
-            'profession_id'=>$professionId,
+            // 'profession_id'=>$professionId,
             'is_admin'=>true
         ]);
 
-        // crea un usuario con la profession de la vble $professionId creada arriba
-        factory(User::class)->create([
+        $user->profile()->create([
+            'bio'=>'Programador back-end y otras muchas cosas más',
             'profession_id'=>$professionId,
-        ]); 
+        ]);
+
+
+
+        // ya no nos hace falta crear los usuarios a mano
+        // crea un usuario con la profession de la vble $professionId creada arriba
+        // factory(User::class)->create([
+        //     'profession_id'=>$professionId,
+        // ]); 
 
         // crea un usuario sin profession
-        factory(User::class)->create(); 
+        // factory(User::class)->create(); 
 
-        //creo 40 usuarios aleatorios
-        factory(User::class,48)->create(); 
+        //creo 29 usuarios aleatorios
+        // factory(User::class,29)->create(); 
+        factory(User::class,29)->create()->each(function($user){
+            $user->profile()->create(
+                factory(App\UserProfile::class)->raw()
+            );
+        }); 
 
     }
 }
