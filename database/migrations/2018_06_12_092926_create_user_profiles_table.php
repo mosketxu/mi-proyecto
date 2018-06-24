@@ -22,6 +22,8 @@ class CreateUserProfilesTable extends Migration
             $table->unsignedInteger('profession_id')->nullable();
             $table->foreign('profession_id')->references('id')->on('professions');
 
+            $table->string('otraProfesion',100)->nullable();
+
             $table->unsignedInteger('user_id');
             // $table->foreign('user_id')->references('id')->on('users');  // no hace falta crear la relacion si creo el metodo profile en el modelo User
 

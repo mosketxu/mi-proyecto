@@ -122,6 +122,7 @@ class UsersModuleTest extends TestCase
             'twitter'=>'https://twitter.com/alexarregui',
             'user_id' => User::findByEmail('alexa@alex.com')->id,
             'profession_id'=>$this->profession->id, // lo traigo de user
+            'otraProfesion'=>'otra profesion distinta de la lista',
             ]);
     }
 
@@ -182,7 +183,33 @@ class UsersModuleTest extends TestCase
             ]);
         }
         
+
+    /** @test */
+    function the_profession_field_is_requiered_if_otra_profession_is_null()
+        {
+            $this->withoutExceptionHandling();
     
+            // asegurandome que paso el campo de profession_id en null
+            $this->post('/usuarios/',$this->getValidData([
+                'profession_id'=>null,
+            ]))->assertRedirect(route('users.index'));
+
+            $this->assertCredentials([
+                'name'=>'Alex',
+                'email'=>'alexa@alex.com',
+                'password'=>'123456',
+                // 'profession_id'=>null // en el caso twitter estaba en la siguiente assert. Me lo llevo de a user_profiles
+            ]);
+    
+            $this->assertDatabaseHas('user_profiles',[
+                'bio'=>'Programador de Laravel y Vue.js',
+                //'twitter'=>null, // ojo hay que quitar esto de aqui porque no estoy validando Twiter sino profession_id, y además esta en a tabla users no en la tabla profiles, asi que lo pongo arriba
+                'user_id' => User::findByEmail('alexa@alex.com')->id,
+                'profession_id'=>null // Lo traigo de a user
+            ]);
+        }
+        
+
     /** @test */
     function it_loads_the_edit_users_page()
     {
@@ -574,13 +601,15 @@ class UsersModuleTest extends TestCase
         // array_filter filtra los campos que son null. De esta manera, si el campo de twitter es null lo elimino por completo
         // array_merge combina los atributos  que envío a la función con lo que tengo predefinidos
         // dando prioridad a los $custom
-        return array_filter(array_merge([
+        // return array_filter(array_merge([
+        return array_merge([
             'name'=>'Alex',
             'email'=>'alexa@alex.com',
             'password'=>'123456',
-            'profession_id'=>$this->profession->id, 
+            'profession_id'=>$this->profession->id,
+            'otraProfesion'=>'otra profesion distinta de la lista' ,
             'bio'=>'Programador de Laravel y Vue.js',
             'twitter'=>'https://twitter.com/alexarregui',
-        ], $custom));
+        ], $custom);
     }
 }

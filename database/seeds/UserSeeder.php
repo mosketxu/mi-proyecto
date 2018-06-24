@@ -117,7 +117,7 @@ class UserSeeder extends Seeder
         // factory(User::class,29)->create(); 
         factory(User::class,29)->create()->each(function($user){
             $user->profile()->create(
-                factory(App\UserProfile::class)->raw()
+                factory(App\UserProfile::class)->raw() //tengo que crear un model factory para obtener los atributos desde la consola hago php artisan make:fact UserProfileFactory --model=UserProfile
             );
         }); 
 

@@ -63,7 +63,7 @@ class UserController extends Controller
 
     public function create(){
 
-        $professions= Profession::OrderBy('title','ASC')->get(); // pongo use proffesion al principio
+        $professions= Profession::OrderBy('title','ASC')->get(); // pongo use Profession al principio
 
         return view('users.create',compact('professions')); 
         // return 'Crear nuevo usuario';
@@ -144,7 +144,7 @@ class UserController extends Controller
 		if ($data['password'] != null){
 			$data['password']=bcrypt($data['password']);
 		} else {
-			unset($data['password']);  //quita el indice de arrat asociativo de $data, es decir no lo valida
+			unset($data['password']);  //quita el indice de array asociativo de $data, es decir no lo valida
 		}
 
         $user->update($data);

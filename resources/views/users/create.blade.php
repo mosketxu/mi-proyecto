@@ -75,6 +75,11 @@
                     <div class="valid-feedback">Looks good!</div>
                     <div class="invalid-feedback">Please us tell something about you.</div>
 
+                    <label for="otraProfesion" >Otra Profesión:</label>
+                    <input type="text" class="form-control" name="otraProfesion" id="otraProfesion" placeholder="pon tu profesión si no está en la lista"  value={{ old('otraProfesion') }} >
+                    <div class="valid-feedback">Looks good!</div>
+                    <div class="invalid-feedback">Please choose a url.</div>
+
                     <label for="twitter" >twitter:</label>
                     <input type="text" class="form-control" name="twitter" id="twitter" placeholder="https://twitter.com/alexarregui"  value={{ old('twitter') }} >
                     <div class="valid-feedback">Looks good!</div>
