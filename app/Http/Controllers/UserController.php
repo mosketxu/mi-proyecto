@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 // use App\User;
 // use App\UserProfile;
 // uso mejor notacion de PHP 7
-use App\{User, UserProfile, Profession};
+use App\{User, UserProfile, Profession, Skill};
 use Illuminate\Validation\Rule;
 use App\Http\Requests\CreateUserRequest;
 
@@ -64,8 +64,9 @@ class UserController extends Controller
     public function create(){
 
         $professions= Profession::OrderBy('title','ASC')->get(); // pongo use Profession al principio
+        $skills=Skill::OrderBy('name','ASC')->get(); //pongo use Skill al principio
 
-        return view('users.create',compact('professions')); 
+        return view('users.create',compact('professions','skills')); 
         // return 'Crear nuevo usuario';
     } 
 

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use App\User;
 use App\Profession;
+use App\Skill;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,13 +68,26 @@ class UsersModuleTest extends TestCase
     /** @test */
     function it_loads_the_new_users_page()
     {
+        $this->withoutExceptionHandling();
         $profession=factory(Profession::class)->create();
+
+        // $otraProfesion=factory(OtraProfession::class)->create();
+
+        $skillA=factory(Skill::class)->create();
+        $skillB=factory(Skill::class)->create();
+        
 
         $this->get('/usuarios/nuevo')
             ->assertStatus(200)
             ->assertSee('Crear usuario')
             ->assertViewHas('professions',function($professions) use ($profession){ //verifico que la vista tiene la variable profession y que es la que le estoy pasando aqui
                 return $professions->contains($profession);                                //si la funcion anonima retorna verdadero la prueba pasa, sino no pasa
+            })
+            // ->assertViewHas('otrasProfesiones',function($otrasProfesiones) use ($otraProfesion){ 
+            //     return $otrasProfesiones->contains($otraProfesion);                              
+            // })
+            ->assertViewHas('skills',function($skills) use ($skillA,$skillB){ //verifico que la vista tiene la variable profession y que es la que le estoy pasando aqui
+                return $skills->contains($skillA) && $skills->contains($skillB);                                //si la funcion anonima retorna verdadero la prueba pasa, sino no pasa
             });
     }
 
