@@ -73,6 +73,10 @@ class User extends Authenticatable
         // return $this->belongsTo(Profession::class,'nombreDelCampo');
         
     }
+
+    public function skills(){
+        return $this->belongsToMany(Skill::class, 'user_skill');  //si no le paso el nombre de la tabla que quiero relacionar el busca la talba skill_user porque por convencion la busca por orden alfabetico
+    }
     
     // cero la relacion entre User (estoy en el modelo ya) y UserProfile indicandole que el user tiene un perfil 
     public function profile(){

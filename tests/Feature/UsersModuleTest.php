@@ -66,6 +66,47 @@ class UsersModuleTest extends TestCase
     }
     
     /** @test */
+    function the_skills_must_be_an_array()
+    {
+        // $this->withoutExceptionHandling(); 
+        $this->handleValidationExceptions();
+
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/',$this->getvalidData([
+                'skills'=>"PHP,JS", //el usuario manipulando chrome con F12 manda una cadena de texto en lugar de un array
+            ]))
+            ->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['skills']); //en ese caso esperariamos ver un error en el campo skills
+
+        // $this->assertEquals(0,User::count());
+        $this->assertDatabaseEmpty('users');
+
+    }
+
+        /** @test */
+    function the_skills_must_be_valid()
+        {
+            // $this->withoutExceptionHandling(); 
+            $this->handleValidationExceptions();
+
+            $skillA = factory(Skill::class)->create() ;
+            $skillB = factory(Skill::class)->create() ;
+    
+            $this->from('usuarios/nuevo')
+                ->post('/usuarios/',$this->getvalidData([
+                    'skills'=>[$skillA->id, $skillB->id + 1] , //envio el id de la habilidad A y el de la habilidad B mas 1. Debería dar error porque este segundo no existe
+                ]))
+                ->assertRedirect('usuarios/nuevo')
+                ->assertSessionHasErrors(['skills']); //en ese caso esperariamos ver un error en el campo skills
+    
+            // $this->assertEquals(0,User::count());
+            $this->assertDatabaseEmpty('users');
+    
+        }
+    
+    
+
+    /** @test */
     function it_loads_the_new_users_page()
     {
         $this->withoutExceptionHandling();
@@ -100,7 +141,6 @@ class UsersModuleTest extends TestCase
         //     'password'=>'123456'
         // ])->assertSee('Procesando información...');
         
-        $this->withoutExceptionHandling();
 
         //Para no repetir código y que quede todo más limpio
         // me llevo lo comentado siguiente a una funcion en este mismo fichero llamada getValidData al final
@@ -113,16 +153,20 @@ class UsersModuleTest extends TestCase
         //     'twitter'=>'https://twitter.com/alexarregui',
         //     ])->assertRedirect(route('users.index'));
 
-        $this->post('/usuarios', $this->getValidData())->assertRedirect(route('users.index'));;
+        $this->withoutExceptionHandling();
 
-        // dd(User::all());
-        // dd(User::first());
+        // para poder pasar los skills los tengo que generar primero
 
-            // $this->assertDatabaseHas('users',[
-        //     'name'=>'Alex',
-        //     'email'=>'alexa@alex.com',
-        //     'password'=>'123456'
-        // ]);
+        $skillA=factory(Skill::class)->create();
+        $skillB=factory(Skill::class)->create();
+        $skillC=factory(Skill::class)->create();
+
+        $this->post('/usuarios', $this->getValidData([
+            'skills'=>[$skillA->id,$skillB->id],
+        ]))->assertRedirect(route('users.index'));;
+
+        // $this->assertDatabaseHas('users',[ 'name'=>'Alex', 'email'=>'alexa@alex.com', 'password'=>'123456']);
+        // lo mismo con assertCredentials
 
         $this->assertCredentials([
             'name'=>'Alex',
@@ -131,13 +175,31 @@ class UsersModuleTest extends TestCase
             // 'profession_id'=>$this->profession->id, // lo llevo a user_profiles
         ]);
 
+        $user=User::findByEmail('alexa@alex.com');
         $this->assertDatabaseHas('user_profiles',[
             'bio'=>'Programador de Laravel y Vue.js',
             'twitter'=>'https://twitter.com/alexarregui',
-            'user_id' => User::findByEmail('alexa@alex.com')->id,
+            'user_id' => $user->id,
             'profession_id'=>$this->profession->id, // lo traigo de user
             'otraProfesion'=>'otra profesion distinta de la lista',
             ]);
+
+        $this->assertDatabaseHas('user_skill', [ //chequeo que la llave foranea de user_id corresponda con la habilidad que fue creada con el modelo factory
+            'user_id'=>$user->id,
+            'skill_id'=>$skillA->id,
+        ]);
+
+        //como un usuario puede tener muchas habilidades y estoy enviando la peticion post con 2 habilidades espero un segundo registro
+        $this->assertDatabaseHas('user_skill', [ //chequeo que la llave foranea de user_id corresponda con la habilidad que fue creada con el modelo factory
+            'user_id'=>$user->id,
+            'skill_id'=>$skillB->id,
+        ]);
+
+        // la tercera habilidad que he creado no la voy a enviar por lo que no debería estar en la bbdd
+        $this->assertDatabaseMissing('user_skill', [ 
+            'user_id'=>$user->id,
+            'skill_id'=>$skillC->id,
+        ]);
     }
 
         /** @test */
@@ -198,8 +260,9 @@ class UsersModuleTest extends TestCase
         }
         
 
+        
     /** @test */
-    function the_profession_field_is_requiered_if_otra_profession_is_null()
+    function the_profession_field_is_requiered_if_otra_profession_is_null() //esta no la se hacer
         {
             $this->withoutExceptionHandling();
     

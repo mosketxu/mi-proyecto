@@ -44,6 +44,10 @@ class CreateUserRequest extends FormRequest
                 Rule::exists('professions','id')->where('selectable',true)->whereNull('deleted_at')
             ], //si no pongo el where falla la prueba only_selectable_professions_are_valid
             'otraProfesion'=>'nullable',
+            'skills'=>[
+                'array',
+                Rule::exists('skills','id')    // sin esta regla falla la prueba the_skills_must_be_valid porque da un error de llave foranea en la bbdd
+            ],
         ];
     }
 
@@ -117,6 +121,13 @@ class CreateUserRequest extends FormRequest
                 'twitter'=> $data['twitter'], // ?? null,   //si uso present puedo quitar el ?? null
                 'profession_id'=>$data['profession_id'], //  ?? null,  //si uso present puedo quitar el ?? null. lo traigo de user
                 ]);
+
+            // $user->skills()->attach($data['skills'] ?? []);  // si pongo esto me protejo de que skills este vacio
+            // otra forma
+            if (!empty ($data['skills']))
+            {
+                $user->skills()->attach($data['skills']); 
+            }
         });
     }
 }
