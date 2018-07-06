@@ -14,6 +14,9 @@ class ProfessionSeeder extends Seeder
     public function run()
     {
 
+
+        //recordar que hay que ir a DatabaseSeeder.php para registrar el seeder        
+
         // directamente con codigo sql
         // Entre otros problemas permite inyeccion de sql
         // DB::insert('INSERT INTO professions (title) VALUES ("Desarrollador Back-ends")');

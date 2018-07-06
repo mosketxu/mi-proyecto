@@ -10,6 +10,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
+
 class UsersModuleTest extends TestCase
 {
     use RefreshDatabase;
@@ -19,7 +20,10 @@ class UsersModuleTest extends TestCase
     /** @test */
     function it_shows_the_users_list()
     {
-        //Usuario con nombre Joel y Carlos para que funcione el test
+        
+        //Genero un con nombre Joel y otro con nombre Carlos y 
+        //chequeo que el status sea 200: The request has succeeded. 
+        // que en la vista veo el texto "Listado de usuarios" en el archivo de rutas get('/usuarios') me envia al controlador users.index y este me envia a la vista
         factory(User::class)->create([
             'name'=>'Joel',
         ]);
@@ -38,8 +42,6 @@ class UsersModuleTest extends TestCase
     /** @test */
     function it_shows_a_default_message_if_the_users_list_is_empty()
     {
-        // DB::table('users')->truncate();
-
         $this->get('/usuarios')
             ->assertStatus(200)
             ->assertSee('No hay usuarios registrados');
@@ -48,11 +50,12 @@ class UsersModuleTest extends TestCase
     /** @test */
     function it_displays_the_user_details()
     {
+        // primero creo un usuario y lo ademas lo guardo en la vble $user
         $user=factory(User::class)->create([
             'name'=>'Alexander Arregui'
         ]);
 
-        $this->get('/usuarios/'.$user->id)
+        $this->get('/usuarios/'.$user->id)  //veo si lo encuentro 
             ->assertStatus(200)
             ->assertSee('Alexander Arregui');
     }
@@ -195,7 +198,7 @@ class UsersModuleTest extends TestCase
             'skill_id'=>$skillB->id,
         ]);
 
-        // la tercera habilidad que he creado no la voy a enviar por lo que no debería estar en la bbdd
+        // la tercera habilidad que he creado no la voy a enviar por lo que no debería estar en la bbdd. Por eso pongo Missing
         $this->assertDatabaseMissing('user_skill', [ 
             'user_id'=>$user->id,
             'skill_id'=>$skillC->id,
@@ -446,7 +449,20 @@ class UsersModuleTest extends TestCase
         // sustituyo la verifiacion por la de assertDatabaseEmpty
         // $this->assertEquals(0,User::count());
         $this->assertDatabaseEmpty('users');
+    }
 
+    /** @test */
+    function the_password_must_be_valid()
+    {
+        $this->withExceptionHandling(); 
+        // Pruebo que pasa si envío un password que no cumpla las reglas, por ejemplo que tenga menos de 6 caracteres
+        $this->from('usuarios/nuevo')
+            ->post('/usuarios/',$this->getvalidData([
+                'password'=>"12345",    
+            ]))
+            ->assertRedirect('usuarios/nuevo')
+            ->assertSessionHasErrors(['password']);
+        $this->assertDatabaseEmpty('users');
     }
 
     /** @test */

@@ -19,4 +19,5 @@ class SkillSeeder extends Seeder
         factory(\App\Skill::class)->create(['name'=>'OOP']);
         factory(\App\Skill::class)->create(['name'=>'TDD']);
     }
+    //recirdar que hay que ir a DatabaseSeeder.php para registrar el seeder
 }

@@ -14,7 +14,12 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-/*         Seleccionar de forma manual y marcadores para evitar inyeccion SQL
+
+
+    //recordar que hay que ir a DatabaseSeeder.php para registrar el seeder
+
+
+    /*         Seleccionar de forma manual y marcadores para evitar inyeccion SQL
         $professions=DB::select('SELECT id FROM professions WHERE title=?',['Desarrollador Back-end']);
         dd($professions); */
 

@@ -99,16 +99,25 @@
                 <div class="form-group">
                     <h5>Habilidades</h5>
                     @foreach($skills as $skill)
-                        <div class="form-check form-check-inline">
-                            <input  name="skills[{{ $skill->id }}]" 
-                                    class="form-check-input" 
-                                    type="checkbox" 
-                                    id=" skill_{{ $skill->id }}" 
-                                    value="{{ $skill->id}}"
-                                    {{--  {{ is_array(old('skills')) && in_array($skill->id,old('skills')) ? 'checked' : '' }}>  obtengo el valor del campo skills y pregunto si la hailidad está en el array de skills que he retornado cuando se recarga la pagina tras un error de validadcion   --}}
-                                    {{ old("skills.{$skill->id}") ? 'checked' : '' }}> {{-- como es lioso lo hago de esta otra manera asegurandome que he puesto el id del skikk en el name --}}
-                            <label class="form-check-label" for=" skill_{{ $skill->id }}">{{ $skill->name }}</label>
-                        </div>
+                    <div class="form-check form-check-inline">
+                        <input  name="skills[{{ $skill->id }}]" 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id=" skill_{{ $skill->id }}" 
+                            value="{{ $skill->id}}"
+                            {{-- obtengo el valor del campo skills y pregunto si el skill está en el array de skills que he retornado cuando se recarga la pagina tras un error de validadcion
+                            Si hay alguno seleccionado todo va bien
+                            pero si no hay nada seleccionado da error en vista porque in_array espera un array en el segundo argumento y recibe null
+                            Para evitarlo me aseguro de que no sea null con el is_array --}} --}}
+                            {{--  {{ is_array(old('skills')) && in_array($skill->id,old('skills')) ? 'checked' : '' }}>    --}}
+
+                            {{-- una solucion menos engorrosa es usar el helper array_wrap de laravel que detecta si hay null y en ese caso retorna un array vacio --}}
+                            {{-- {{ in_array($skill->id,array_wrap(old('skills'))) ? 'checked' : '' }} --}}
+
+                            {{-- otra solucion sería buscar el valor del checkbox en concreto y no de todos--}}
+                            {{ old("skills.{$skill->id}") ? 'checked' : '' }}> {{-- como es lioso lo hago de esta otra manera asegurandome que he puesto el id del skill en el name --}}
+                        <label class="form-check-label" for=" skill_{{ $skill->id }}">{{ $skill->name }}</label>
+                    </div>
                     @endforeach
                 </div>
                

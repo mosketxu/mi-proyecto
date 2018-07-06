@@ -29,7 +29,9 @@ class CreateUserRequest extends FormRequest
         return [
             'name'=>'required',
             'email'=>'required|email|unique:users,email',
-            'password'=>'required','min:6',
+            'password'=>['required','string','min:6',], 
+            // si quiero poner coondiciones a la contraseña uso expresiones regulares.
+            // 'password'=>['required','string','min:6','regex:/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/' ], //La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula.             NO puede tener otros símbolos.
             'bio'=>'required', //para validar esto hacer una prueba con TDD
             'twitter'=>['nullable','present','url'], //si pongo 'present' debo quitar array_filter del getValidaData, sino no pasan las pruebas
             //  'twitter'=>['nullable','url'], //para validar esto hacer una prueba con TDD
@@ -39,11 +41,21 @@ class CreateUserRequest extends FormRequest
             // y que ademas sea selectable
             // 'profession_id'=>Rule::exists('professions','id')->where('selectable',true), //si no pongo el where falla la prueba only_selectable_professions_are_valid
             // si ademas quiero que solo se puedan seleccionar las que no están borradas con el softDelete
+            // 'profession_id'=>[
+            //     'nullable', 'present', // si pongo present debo quitar array_filter del getValidaData, sino no pasan las pruebas
+            //     Rule::exists('professions','id')->where('selectable',true)->whereNull('deleted_at')
+            // ], //si no pongo el where falla la prueba only_selectable_professions_are_valid
             'profession_id'=>[
-                'nullable', 'present', // si pongo present debo quitar array_filter del getValidaData, sino no pasan las pruebas
-                Rule::exists('professions','id')->where('selectable',true)->whereNull('deleted_at')
+                'nullable', 
+                'present', // si pongo present debo quitar array_filter del getValidaData, sino no pasan las pruebas
+                Rule::exists('professions','id')->where('selectable',true)->whereNull('deleted_at'),
+                'required_if:otraProfesion,==,""'
             ], //si no pongo el where falla la prueba only_selectable_professions_are_valid
-            'otraProfesion'=>'nullable',
+//            'otraProfesion'=>'nullable',
+            'otraProfesion'=>[
+                'nullable', 
+                'required_if:profession_id,==,""',
+            ],
             'skills'=>[
                 'array',
                 Rule::exists('skills','id')    // sin esta regla falla la prueba the_skills_must_be_valid porque da un error de llave foranea en la bbdd
@@ -54,6 +66,8 @@ class CreateUserRequest extends FormRequest
     public function messages(){
         return [
             'name.required'=>'El campo nombre es obligatorio',
+            'otraProfesion.required_if'=>"Obligatorio si profesion no esta seleccionado",
+            'profession_id.required_if'=>"Obligatorio si otraprofesion no esta seleccionado",
         ];
     }
 
@@ -114,7 +128,14 @@ class CreateUserRequest extends FormRequest
                 // 'profession_id'=>$data['profession_id'], //  ?? null,  //si uso present puedo quitar el ?? null. Me lo llevo a user profile
             ]);
             
+            // A la hora de rellenar el UserProfile yo entiendo mejor devolver el $user->id, pero lo que ha hecho Duilio es crear el metodo profile en el modelo user y tirar de ahí. Dice que es mas limpio
+            // UserProfile::create([
+            //     'bio'=> $data['bio'],
+            //     'twitter'=> $data['twitter'],
+            //     'user_id'=> $user->id,  
+            // ]);
             $user->profile()->create([
+                // no relleno la clave foranea de user_id porque se hace en el metodo profile del modelo user, a mi me sale mas facil lo que pongo en el bloque comentado anterior
                 'bio'=> $data['bio'],
                 'otraProfesion'=>$data['otraProfesion'],
                 // 'twitter'=> array_get($data, 'twitter'), uso la siguiente para ser consistente
