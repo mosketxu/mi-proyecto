@@ -75,7 +75,11 @@ class User extends Authenticatable
     }
 
     public function skills(){
-        return $this->belongsToMany(Skill::class, 'user_skill');  //si no le paso el nombre de la tabla que quiero relacionar el busca la talba skill_user porque por convencion la busca por orden alfabetico
+        //es importante la nomeclatura. minusculas y separado con guion bajo. 
+        //la convecion de las relaciones muchos a muchos con tablas pivote es el nombre de los modelos en minusculas singular y ordenados de manera alfabetica y separados por un guion,
+        //asi que busca la relacion con la tabla skill_user no user_skill, porque la s viene antes que la u
+        //si quiero que la tabla se llame realmente user_skill lo tenfo que indicar a la hora de la relacion
+        return $this->belongsToMany(Skill::class, 'user_skill'); 
     }
     
     // cero la relacion entre User (estoy en el modelo ya) y UserProfile indicandole que el user tiene un perfil 

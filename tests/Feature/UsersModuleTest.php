@@ -68,6 +68,8 @@ class UsersModuleTest extends TestCase
             ->assertSee('Página no encontrada');
     }
     
+    
+    /* mando algo que no sea un array para que de error. Luego pongo una regla para evitarlo y asi la prueba pasa. Lo compruebo verificando que no se ha creado nada */
     /** @test */
     function the_skills_must_be_an_array()
     {
@@ -98,7 +100,7 @@ class UsersModuleTest extends TestCase
             $this->from('usuarios/nuevo')
                 ->post('/usuarios/',$this->getvalidData([
                     'skills'=>[$skillA->id, $skillB->id + 1] , //envio el id de la habilidad A y el de la habilidad B mas 1. Debería dar error porque este segundo no existe
-                ]))
+                ]))                                            //entonces dara un error de foreign key no valido
                 ->assertRedirect('usuarios/nuevo')
                 ->assertSessionHasErrors(['skills']); //en ese caso esperariamos ver un error en el campo skills
     
@@ -170,7 +172,6 @@ class UsersModuleTest extends TestCase
 
         // $this->assertDatabaseHas('users',[ 'name'=>'Alex', 'email'=>'alexa@alex.com', 'password'=>'123456']);
         // lo mismo con assertCredentials
-
         $this->assertCredentials([
             'name'=>'Alex',
             'email'=>'alexa@alex.com',
@@ -179,6 +180,7 @@ class UsersModuleTest extends TestCase
         ]);
 
         $user=User::findByEmail('alexa@alex.com');
+
         $this->assertDatabaseHas('user_profiles',[
             'bio'=>'Programador de Laravel y Vue.js',
             'twitter'=>'https://twitter.com/alexarregui',
@@ -187,7 +189,8 @@ class UsersModuleTest extends TestCase
             'otraProfesion'=>'otra profesion distinta de la lista',
             ]);
 
-        $this->assertDatabaseHas('user_skill', [ //chequeo que la llave foranea de user_id corresponda con la habilidad que fue creada con el modelo factory
+        //chequeo que la llave foranea de user_id corresponda con la habilidad que fue creada con el modelo factory
+        $this->assertDatabaseHas('user_skill', [ 
             'user_id'=>$user->id,
             'skill_id'=>$skillA->id,
         ]);

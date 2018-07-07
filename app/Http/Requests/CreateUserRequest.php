@@ -57,7 +57,7 @@ class CreateUserRequest extends FormRequest
                 'required_if:profession_id,==,""',
             ],
             'skills'=>[
-                'array',
+                'array',    //como espera un array lo debo marcar
                 Rule::exists('skills','id')    // sin esta regla falla la prueba the_skills_must_be_valid porque da un error de llave foranea en la bbdd
             ],
         ];
@@ -143,11 +143,14 @@ class CreateUserRequest extends FormRequest
                 'profession_id'=>$data['profession_id'], //  ?? null,  //si uso present puedo quitar el ?? null. lo traigo de user
                 ]);
 
-            // $user->skills()->attach($data['skills'] ?? []);  // si pongo esto me protejo de que skills este vacio
+            // tengo que adjuntar los skills del usuario. Lo puedo hacer con el metodo attach
+            // llamo al metodo skills, para eso lo tengo que crear en userController
+            // si pongo esto me protejo de que skills este vacio
+            // $user->skills()->attach($data['skills'] ?? []);  
             // otra forma
-            if (!empty ($data['skills']))
+            if (!empty ($data['skills']))           // $user->skills()->attach($data['skills'] ?? []); 
             {
-                $user->skills()->attach($data['skills']); 
+                $user->skills()->attach($data['skills']); //el usuario lo acabo de crear, es nnuevo. POr eso puedo usar attach. Si fuera un usuario que ya existe, por ejemplo en un update, usaria el metodo sync
             }
         });
     }
