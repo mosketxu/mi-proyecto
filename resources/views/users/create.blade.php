@@ -120,6 +120,95 @@
                     </div>
                     @endforeach
                 </div>
+
+                <div class="form-group">
+                    <h5 class="mt-3">Roles</h5>
+                    {{-- opcion 1  con el listado de roles en el mismo foereach --}}
+                    {{--   al poner $role=>$name recupero tanto el indice ($role) como el nombre ($name), el indice al ser array asociativo es 'admin' o 'user', y el nombre será 'Admin' o 'Usuario' --}}
+                    {{-- @foreach(['admin'=>'Admin','user'=>'Usuario'] as $role=>$name)  --}}
+                    {{-- <div class="form-check form-check-inline"> --}}
+                        {{--  el id será entonce role_admin y role_user --}}
+                        {{-- <input class="form-check-input" type="radio" name="role" id="role_{{ $role }}" value="{{ $role }}">  --}}
+                        {{-- <label class="form-check-label" for="role_{{ $role }}">{{ $name }}</label> --}}
+                    {{-- </div> --}}
+                    {{-- @endforeach --}}
+
+                    {{-- opcion 2 Usando idiomas. --}}
+                    {{-- En resouces\lang\en esta la carpeta con los idiomas en ingles. De momento sigo ahí --}}
+                    {{-- En esa carpeta creo un archivo llamado users.php donde retorno un array asociativo con la llave 'roles' que a su vez tendrá otro array ['admin'=>'Admin','user'=>'Usuario'] --}}
+                    {{-- para poder usarlo uso el helper trans para obtener esta traduccion --}}
+                    {{-- llamo al users.roles donde users se corresponde con el archibo que he creado en la carpeta \resources\lang\en y roles a la llave que busco--}}
+                    {{-- Laravel buscara ese archivo y me devuelve el valor de roles, en este caso el array asociativo --}}
+                    {{-- @foreach(trans('users.roles') as $role=>$name) 
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="role" id="role_{{ $role }}" value="{{ $role }}"> 
+                        <label class="form-check-label" for="role_{{ $role }}">{{ $name }}</label>
+                    </div>
+                    @endforeach --}}
+
+                    {{-- opcion 3 Simplificando a partir de los idiomas --}}
+                    {{-- Mando la variable $roles desde el controlador UserController --}}
+                    {{-- @foreach($roles as $role=>$name) 
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="role" id="role_{{ $role }}" value="{{ $role }}"> 
+                        <label class="form-check-label" for="role_{{ $role }}">{{ $name }}</label>
+                    </div>
+                    @endforeach --}}
+
+                    {{-- Una vez lista la vista debo controlar que tenga memoria cuando hay un error de validacion --}}
+                    @foreach($roles as $role=>$name) 
+                    <div class="form-check form-check-inline">
+                        <input  class="form-check-input" 
+                                type="radio" 
+                                name="role" 
+                                id="role_{{ $role }}" 
+                                value="{{ $role }}"
+                                {{ old('role')== $role ? 'checked' : '' }}> 
+                        <label class="form-check-label" for="role_{{ $role }}">{{ $name }}</label>
+                    </div>
+                    @endforeach
+
+                    {{-- voy a las pruebas y en getvalidata envio el role user como user por defecto y así en la verificacion de las credenciales del usuario quiero verificar que sea user--}}
+                    {{-- ejecuto la prueba it_creates_a_new_user --}}
+                    {{-- Primer error: Unknown column 'role' in 'where clause' --}}
+                        {{-- debo añadirla a la tabla en la migracion y revisar el model user por el metodo isAdmin--}}
+                    {{-- Segundo Error: Field 'role' doesn't have a default value --}}
+                        {{-- Es porque el campo role no está como nullable en la migracion y no guardo ningun valor en el usuario  --}}
+                        {{-- En el formrequest al momento de crear el usuario le paso el role 'role'=>$data['role'] --}}
+                        {{-- Para ello previamente definir el role en la Rules aunque sea 'role'=>'' --}}
+                    {{-- tecer error: Field 'role' doesn't have a default value --}}
+                        {{-- hay que decir que role es fillable en el modelo user PERO LO HACEMOS DE OTRA MANERA  --}}
+                        {{-- Lo que vamos a hacer es crear el usuario de otra manera en el metodo createUser del formRequest.  --}}
+                        {{-- En lugar de $user=User::create([ etc hago un new user i.e. $user=new User([ etc  --}}
+                        {{-- esto crea el modelo pero no lo guarda en la base de datos y --}}
+                        {{-- luego agrego en un paso aparte su role y --}}
+                        {{-- finalmente guarda el usuario utilizando save() --}}
+                    {{-- La prueba pasa --}}
+                    {{-- Explicacion de porque hace lo de role así.
+                    En este caso no sería necesario porque no pasamos todos los datos de forma arbitraria, sino que los estoy asignando uno a uno, el name, el email, la pass encriptada
+                    Es decir digo cuales son fillables y cuales no
+                    Fillable nos protege si estamos pasando datos de manera masiva al modelo con el metodo all() del obejto request $user=new User($this->all()); --}}
+
+                    {{-- ahora hacemos la validacion --}}
+                    {{-- En UsersModuleTest hago las pruebas
+                        the_role_is_optional
+                        the_role_must_be_valid en esta prueba hemos creado una nueva clase Role con el metodo getList() que usamos en la rule con un implode
+                        las documento allí
+                        y esta pruebas pasan PERO
+                        CUANDO EJECUTO TODAS LAS DEMAS FALLAN UN MONTON. --}}
+                    
+                    {{-- Como hay mucho errores para detectar el primero hacemos t --stop-on-failure --}}
+                    {{-- Error en it_shows_the_users_list Field 'role' doesn't have a default value --}}
+                    {{-- es debido a que en el UserFactory no estamos creando los roles. Estamos creando usuarios pero sin informar los roles --}}
+                    {{-- colocamos el role por defecto user en UserFactory --}}
+
+                    {{-- se arreglan muchos errores pero queda uno en the_role_field_is_optional da ValidationException: the given data is invalid --}}
+                    {{-- esto es debido a que nuestro campo role no tiene la regla nullable --}}
+                    {{-- ya pasan las pruebas --}}
+
+                    {{-- Para probar el formulario hay que hacer un php artisan migrate: fress --seed --}}
+
+                </div>
                
                 <div class="form-group mt-4">
                     <button type="submit" class="btn btn-primary">Crear usuario</button>

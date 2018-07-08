@@ -65,8 +65,9 @@ class UserController extends Controller
 
         $professions= Profession::OrderBy('title','ASC')->get(); // pongo use Profession al principio
         $skills=Skill::OrderBy('name','ASC')->get(); //pongo use Skill al principio
+        $roles=trans('users.roles'); //explicacion del trans en la vista
 
-        return view('users.create',compact('professions','skills')); 
+        return view('users.create',compact('professions','skills','roles')); 
         // return 'Crear nuevo usuario';
     } 
 

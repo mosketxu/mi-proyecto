@@ -177,6 +177,7 @@ class UsersModuleTest extends TestCase
             'email'=>'alexa@alex.com',
             'password'=>'123456',
             // 'profession_id'=>$this->profession->id, // lo llevo a user_profiles
+            'role'=>'user',
         ]);
 
         $user=User::findByEmail('alexa@alex.com');
@@ -264,8 +265,62 @@ class UsersModuleTest extends TestCase
                 'profession_id'=>null // Lo traigo de a user
             ]);
         }
-        
 
+        //si paso el role en nulo espero que se cree con el role de user
+        //para que la prueba pase tengo que poner el Rules que role es nullable
+        // y ademas tengo que decirle cual es el valor por defecto si no informo del campo
+        // $user->role=$data['role'] ?? 'user';  
+        // ademas si uso asserCredentials necesito pasar el password
+        // asi que uso el assertDabaseHas
+        /** @test */
+        function the_role_field_is_optional()
+        {
+            $this->withoutExceptionHandling();
+    
+            $this->post('/usuarios/',$this->getValidData([
+                'role'=>null,
+            ]))->assertRedirect(route('users.index'));
+
+            // si uso el metodo assertCredentiasl tengo que pasar el password
+            //mejor uso el assertDatabaseHAs
+            // $this->assertCredentials([  
+            //     'email'=>'alexa@alex.com',
+            //     'role'=>'user',
+            // ]);
+            $this->assertDatabaseHas('users',[
+                'email'=>'alexa@alex.com',
+                'role'=>'user',
+            ]);
+        }
+
+
+        //si meto un role que no existe espero un error en ese campo 
+        // y verifico que no se haya añadido nada a la base de datos con el assertDatabaseEmpty
+        // si ejecuto la prueba vemos que no ningun error, buno dice false es true y la prueba no pasa
+        // para que pase modifico las rules y digo que 'role'=>'in:admin,user'
+        // da error ValidationException: The given data was invalid. Es decir, que no atrapa la excepcion Fuerzo a que si tenga en cuenta las excepciones
+        // aunque la prueba pasa lo le gusta usar lo de 'in:admin,user' porque poddemo usar los roles en otras partes
+        // lo que hace Duilio es crear una nueva clase llamada Role en el directorio principal es decir en App\
+        // recordar que hay que llamar a la clase con el use
+        
+        /** @test */
+        function the_role_must_be_valid()
+        {
+            // $this->withoutExceptionHandling();
+            $this->handleValidationExceptions();
+    
+            $this->post('/usuarios/',$this->getValidData([
+                'role'=>'role-no*valido',
+            ]))->assertSessionHasErrors('role');
+
+            // $this->assertDatabasemissing('users',[
+            //     'email'=>'alexa@alex.com',
+            // ]);
+
+            $this->assertDatabaseEmpty('users');
+
+
+        }
         
     /** @test */
     function the_profession_field_is_requiered_if_otra_profession_is_null() //esta no la se hacer
@@ -706,6 +761,7 @@ class UsersModuleTest extends TestCase
             'otraProfesion'=>'otra profesion distinta de la lista' ,
             'bio'=>'Programador de Laravel y Vue.js',
             'twitter'=>'https://twitter.com/alexarregui',
+            'role'=>'user',  //por defecto digo que es un usuario normal, no admin
         ], $custom);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\User;
+use App\Role;
 use Illuminate\Support\Facades\DB; //me hace falta para el metodo createUser que he traido del modelo User
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -30,6 +31,10 @@ class CreateUserRequest extends FormRequest
             'name'=>'required',
             'email'=>'required|email|unique:users,email',
             'password'=>['required','string','min:6',], 
+            //-'role'=>'in:admin,user', // en lugar de esto hemos creado una nueva class en App/ llamada Role donde tengo el metodo getList que me da los roles
+            // implode convierte el array en una cadena de texto, con lo que el resultado es el mismo
+            //'role'=>['nullable','in:'.implode(',',Role::getList())],  //pero tambien podemos hacerlo con sintaxis orientada a obejto con la clase Rule
+            'role'=>['nullable',Rule::in(Role::getList()) ],
             // si quiero poner coondiciones a la contraseña uso expresiones regulares.
             // 'password'=>['required','string','min:6','regex:/^(?=\w*\d)(?=\w*[A-Z])(?=\w*[a-z])\S{8,16}$/' ], //La contraseña debe tener al entre 8 y 16 caracteres, al menos un dígito, al menos una minúscula y al menos una mayúscula.             NO puede tener otros símbolos.
             'bio'=>'required', //para validar esto hacer una prueba con TDD
@@ -121,13 +126,30 @@ class CreateUserRequest extends FormRequest
 
             $data=$this->validated(); 
 
-            $user = User::create([
+
+            //OPcion 1: Antes de usar role.
+            // $user = User::create([
+            //     'name'=>$data['name'],
+            //     'email'=>$data['email'],
+            //     'password'=>bcrypt($data['password']),
+            //     // 'profession_id'=>$data['profession_id'], //  ?? null,  //si uso present puedo quitar el ?? null. Me lo llevo a user profile
+            //     'role'=>$data['role'],
+            // ]);
+
+            //OPcion 2: Cuando empiezo a usar role
+            // en lugar de usar el modelo y guardarlo en la base de dato
+            // creo el modelo sin guardar, luego en un segundo paso creo el role y en un tercero lo guardo
+            $user = new User([
                 'name'=>$data['name'],
                 'email'=>$data['email'],
                 'password'=>bcrypt($data['password']),
-                // 'profession_id'=>$data['profession_id'], //  ?? null,  //si uso present puedo quitar el ?? null. Me lo llevo a user profile
+                'role'=>$data['role'],
             ]);
-            
+
+            $user->role=$data['role'] ?? 'user';  //tengo que decirle cual es el valor por defecto si no informo del campo, sino no pasa la prueba
+
+            $user->save();
+
             // A la hora de rellenar el UserProfile yo entiendo mejor devolver el $user->id, pero lo que ha hecho Duilio es crear el metodo profile en el modelo user y tirar de ahí. Dice que es mas limpio
             // UserProfile::create([
             //     'bio'=> $data['bio'],

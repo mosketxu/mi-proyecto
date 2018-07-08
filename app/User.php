@@ -28,9 +28,11 @@ class User extends Authenticatable
         'password', 'remember_token',//'created_at','updated_at',
     ];
 
-    protected $casts=[
-        'is_admin'=>'boolean'   //sin hacer esto, el mysql crea el campo is_admin como tinyInt
-    ];
+    
+     protected $casts=[
+         //el cast siguiente no me hará falta porque he cambiado la detección de si es admin con el campo role
+        //     'is_admin'=>'boolean'   //sin hacer esto, el mysql crea el campo is_admin como tinyInt
+         ];
 
     // me llevo la logica de creacion de usuario al formRequest
     // public static function createUser($data){
@@ -88,6 +90,7 @@ class User extends Authenticatable
     }
 
     public function isAdmin(){
-        return $this->is_admin ;
+        return $this->is_admin ; // como lo he cambiado por role uso la ss instruccion
+        return $this->role==='admin';  //isAdmin devolvera verdadero si el role del usuario es admin
     }
 }

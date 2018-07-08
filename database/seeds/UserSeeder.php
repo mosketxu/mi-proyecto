@@ -99,7 +99,8 @@ class UserSeeder extends Seeder
             'email'=>'mosketxu@gmail.com',
             'password'=>bcrypt('laravel'),
             // 'profession_id'=>$professionId,
-            'is_admin'=>true
+            // 'is_admin'=>true // lo quito porque ahora usamos role
+            'role'=>'admin',
         ]);
 
         $user->profile()->create([

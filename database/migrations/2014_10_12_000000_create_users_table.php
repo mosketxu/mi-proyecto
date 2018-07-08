@@ -18,7 +18,8 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
-            $table->boolean('is_admin')->default(false);
+            //$table->boolean('is_admin')->default(false); //tenia esta para verificar que era un admin pero ahora lo hago con la variable tole
+            $table->string('role'); //reviso el metodo isAdmin en el modelo user
             // $table->string('website')->nullable();
             $table->rememberToken();
             $table->timestamps();
