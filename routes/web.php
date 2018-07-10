@@ -1,14 +1,17 @@
 <?php
 
 Route::get('/', 'WelcomeController@index')
-    ->name('welcome');
+->name('welcome');
 
-    // Route::get('/welcome', 'WelcomeController@index');
+// Route::get('/welcome', 'WelcomeController@index');
 
 Route::get('/saludo/{name}/{nickname}','WelcomeUserController@nameWithNick')
-    ->name('welcome.withNick');
-  
-Route::get('/usuarios', 'UserController@index')
+->name('welcome.withNick');
+
+Route::get('/saludo/{name}','WelcomeUserController@nameWithoutNick')
+    ->name('welcome.withOutNick');
+
+    Route::get('/usuarios', 'UserController@index')
     ->name('users.index');
 
 Route::get('/usuarios/nuevo', 'UserController@create')
@@ -39,8 +42,6 @@ Route::delete('/usuarios/{user}', 'UserController@destroy')
     ->name('users.destroy');
     
 
-Route::get('/saludo/{name}','WelcomeUserController@nameWithoutNick')
-    ->name('welcome.withOutNick');
 
 
  
