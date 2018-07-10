@@ -33,6 +33,8 @@ class UserController extends Controller
         // dd(compact('title','users'));
 
         $title= 'Listado de Usuarios';
+
+        
         // return view('users.index')
         //     ->with('users',User::all())
         //     ->with('title','Listado de usuarios con otro title');
