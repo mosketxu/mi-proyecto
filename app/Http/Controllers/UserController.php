@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 // use App\User;
 // use App\UserProfile;
 // uso mejor notacion de PHP 7
-use App\{User, UserProfile, Profession, Skill};
+// use App\{User, UserProfile, Profession, Skill};
+// use App\Http\Requests\CreateUserRequest;
+//y mejor aun
+use App\{
+    Http\Requests\CreateUserRequest, Profession, Skill, User, UserProfile
+};
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use App\Http\Requests\CreateUserRequest;
 
 //use Illuminate\Support\Facades\DB; //si no no uso el constructor de consultas sino eloquent no me hace falta el facade DB. Pero lo uso en store para el rollback de las transacciones pero como me lo he llevado al modelo User lo vuelvo a comentar
 
@@ -20,7 +26,7 @@ class UserController extends Controller
         // }
         // else{
             // $users= DB::table('users')->get();
-            $users=User::all();    
+            // $users=User::all();    
     // }
         // opcion típica de pasar datos
 /*         return view('users',[
@@ -32,13 +38,17 @@ class UserController extends Controller
 
         // dd(compact('title','users'));
 
-        $title= 'Listado de Usuarios';
+        // $title= 'Listado de Usuarios';
 
         
         // return view('users.index')
         //     ->with('users',User::all())
         //     ->with('title','Listado de usuarios con otro title');
         
+        // return view('users.index',compact('title','users'));
+
+        $users=User::all();    
+        $title= 'Listado de Usuarios';
         return view('users.index',compact('title','users'));
 }
 
@@ -68,8 +78,9 @@ class UserController extends Controller
         $professions= Profession::OrderBy('title','ASC')->get(); // pongo use Profession al principio
         $skills=Skill::OrderBy('name','ASC')->get(); //pongo use Skill al principio
         $roles=trans('users.roles'); //explicacion del trans en la vista
+        $user=new User; //la he de añadir porque uso el include de _fields y pide esa vble. La creo pero llegará vacia
 
-        return view('users.create',compact('professions','skills','roles')); 
+        return view('users.create',compact('professions','skills','roles','user')); 
         // return 'Crear nuevo usuario';
     } 
 
@@ -93,7 +104,7 @@ class UserController extends Controller
                           // tambien llama al metodo User::createUser($data) pero solo si lo ha pasado
                             // quito la llamada a User::createUser($data) de unas lineas mas abao
 
-        $request->createUser();  //cambio el nombre del metodo save() a createUser() y asi meteré la logica de creacion directamente en él
+        // $request->createUser();  //cambio el nombre del metodo save() a createUser() y asi meteré la logica de creacion directamente en él
         
         // si meto toda la logica de la transaccion dentro de DB::transaction, podré hacer un rollback. Aunque el codigo queda un poco feo. Así que creare un nuevo metodo (despues de comentado)
 //        DB::transaction(function()use ($data) {
@@ -125,19 +136,29 @@ class UserController extends Controller
 
         // User::createUser($data); lo quito porque lo llamo desde el formrequest 
 
+        $request->createUser();  
         return redirect()->route('users.index');
     } 
 
     public function edit(User $user){
+
+/*         $professions= Profession::OrderBy('title','ASC')->get(); // pongo use Profession al principio
+        $skills=Skill::OrderBy('name','ASC')->get(); //pongo use Skill al principio
+        $roles=trans('users.roles'); //explicacion del trans en la vista
+
         // return view('edit',['id'=>$id]);
-        return view('users.edit',['user'=>$user]);
+        //return view('users.edit',['user'=>$user]); como paso mas cosas lo hago con la siguiente y compact
+        return view('users.edit',compact('professions','skills','roles','user')); 
+ */
+        $professions= Profession::OrderBy('title','ASC')->get(); 
+        $skills=Skill::OrderBy('name','ASC')->get(); 
+        $roles=trans('users.roles'); 
+        return view('users.edit',compact('professions','skills','roles','user')); 
     }
     
     public function update(User $user){ 
-
-        // dd('actualizar usuario');
-        
-        $data=request()->validate([
+       
+    /*     $data=request()->validate([
             'name'=>'required',
             // 'email'=>'required|email|unique:users,email,'.$user->id,  // en unique los parametros vienen por comas: primero la tabla, luego la columna y luego el ide del usuario que queremos excluir de la validacion
             // desde Laravel 5.3 puedo definir la reglas con sintaxis orientada a objetos
@@ -155,14 +176,26 @@ class UserController extends Controller
 
         return redirect()->route('users.show',['user'=>$user]);
         // return redirect()->route('users.index');
+     */
+        $data=request()->validate([
+            'name'=>'required',
+            'email'=>['required','email',Rule::unique('users')->ignore($user->id)], 
+            'password'=>'nullable|min:6',
+        ]);
+
+        if ($data['password'] != null){
+            $data['password']=bcrypt($data['password']);
+        } else {
+            unset($data['password']);  //quita el indice de array asociativo de $data, es decir no lo valida
+        }
+
+        $user->update($data);
+        return redirect()->route('users.show',['user'=>$user]);
     }
 
-    public function destroy(User $user){
-
+    function destroy(User $user){
         $user->delete();
         return redirect()->route('users.index');
         // return redirect()->route('usuarios'); es lo mismo
     } 
-
-
 }

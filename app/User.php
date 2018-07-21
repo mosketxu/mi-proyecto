@@ -86,7 +86,20 @@ class User extends Authenticatable
     
     // cero la relacion entre User (estoy en el modelo ya) y UserProfile indicandole que el user tiene un perfil 
     public function profile(){
-        return $this->hasOne(UserProfile::class);
+        // return $this->hasOne(UserProfile::class);
+
+        // el problema de dejarlo tal y como está en la linea anterior es que cuando uso las plantillas de blade y uso la misma para edit y para create
+        // cuando devuelvo el valor antiguo en el caso de create uso {{ old('bio', $user->profile->bio) }} y todo va bien
+        // pero cuando intento crear un nuevo usuario da un error de que intento acceder a una propiedad de un objeto y este no existe.
+        // esto es porque al ser nuevo no existe el objeto. Lo soluciono poniendo ->withDefault();
+        // lo que hace esto es crear una instancia del perfil usuario y lo asigna al usuario en cuestion. Algo parecido a lo que hago creando new User en User Controller.
+        
+        // return $this->hasOne(UserProfile::class)->withDefault();
+
+        //inlcuso podría poner un perfil por defecto en caso de que no lo tuviera:
+        return $this->hasOne(UserProfile::class)->withDefault([
+            'bio'=>'programador',
+            ]);
     }
 
     public function isAdmin(){

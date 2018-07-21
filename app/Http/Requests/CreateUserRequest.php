@@ -143,7 +143,6 @@ class CreateUserRequest extends FormRequest
                 'name'=>$data['name'],
                 'email'=>$data['email'],
                 'password'=>bcrypt($data['password']),
-                'role'=>$data['role'],
             ]);
 
             $user->role=$data['role'] ?? 'user';  //tengo que decirle cual es el valor por defecto si no informo del campo, sino no pasa la prueba
