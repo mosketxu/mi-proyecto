@@ -75,12 +75,23 @@ class UserController extends Controller
 
     public function create(){
 
-        $professions= Profession::OrderBy('title','ASC')->get(); // pongo use Profession al principio
-        $skills=Skill::OrderBy('name','ASC')->get(); //pongo use Skill al principio
-        $roles=trans('users.roles'); //explicacion del trans en la vista
+        // Opcion 1: Sin usar viewcomposer
+        // $professions= Profession::OrderBy('title','ASC')->get(); // pongo use Profession al principio
+        // $skills=Skill::OrderBy('name','ASC')->get(); //pongo use Skill al principio
+        // $roles=trans('users.roles'); //explicacion del trans en la vista
+        
+        // $user=new User; //la he de añadir porque uso el include de _fields y pide esa vble. La creo pero llegará vacia
+
+        // return view('users.create',compact('professions','skills','roles','user')); 
+
+        // Opcion 2: Usando View composer. Es decir definiendo en AppServiceProvider el viewcomposer que me mando esos datos
+        // Hago esto cuando ese codigo se puede repetir en muchas parte, en este caso al menos en las vistas create y edit
+        // Entonces quito lo que se supone que va a llegar desde el viewcomposer y solo envio lo que no llega desde el viewcomposer
+        
         $user=new User; //la he de añadir porque uso el include de _fields y pide esa vble. La creo pero llegará vacia
 
-        return view('users.create',compact('professions','skills','roles','user')); 
+        return view('users.create',compact('user')); 
+
         // return 'Crear nuevo usuario';
     } 
 
@@ -150,10 +161,16 @@ class UserController extends Controller
         //return view('users.edit',['user'=>$user]); como paso mas cosas lo hago con la siguiente y compact
         return view('users.edit',compact('professions','skills','roles','user')); 
  */
-        $professions= Profession::OrderBy('title','ASC')->get(); 
-        $skills=Skill::OrderBy('name','ASC')->get(); 
-        $roles=trans('users.roles'); 
-        return view('users.edit',compact('professions','skills','roles','user')); 
+
+        // opcion 1: sin view composer, explicacion en el metodo create
+        // $professions= Profession::OrderBy('title','ASC')->get(); 
+        // $skills=Skill::OrderBy('name','ASC')->get(); 
+        // $roles=trans('users.roles'); 
+        // return view('users.edit',compact('professions','skills','roles','user')); 
+
+        // opcion 2: con viewcomposer
+        return view('users.edit','user')); 
+
     }
     
     public function update(User $user){ 
