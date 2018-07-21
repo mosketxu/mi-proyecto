@@ -264,7 +264,14 @@
 
     @section('content')
 
-        @component('shared._card')
+        {{-- @component('shared._card') --}}
+
+        {{-- Para simplificar mas aun, en lugar de usar @component registro el componente en AppServiceProvider.php
+        Para ello debo llamar en ese fichero al facade blade, use Illuminate\Support\Facades\Blade;
+        y luego poner en boot Blade::component('shared._card','card');
+        de esta manera puedo sustituir @component('shared._card') por @card y @endcomponent por @endcard
+         --}}
+         @card
             {{-- header es el nombre de la variable que espera _card, en este caso $header, y luego le damos valor a la vble --}}
             {{-- @slot('header')     
                 Crear usuario
@@ -300,8 +307,8 @@
                     <a href="{{route('users.index')}}" class="btn btn-link">Volver al listado de usuarios</a>
                 </div>
             </form>
-
-        @endcomponent
+        {{-- @endcomponent --}}
+        @endcard
     @endsection
 
 
