@@ -1,4 +1,4 @@
-{{-- {!!csrf_field()!!}  es el token para evitar que nos hagan post desde sitios de terceros. Es seguridad --}}
+{{-- {!!csrf_field()!!}  es el token para evitar que nos hagan post desde sitios de terceros. Es seguridad contra ataques cross site forgery --}}
 {!!csrf_field()!!} 
 
 {{-- como he traido el html de la vista de create cuando hago la plantilla para edit no muestra los valores, así que debo añadir
@@ -65,14 +65,16 @@ despues de old las variables que toquen, por ejemplo value={{ old('name'),$user-
 
 <div class="form-group">
     <label for="otraProfesion" >Otra Profesión:</label>
-    <input type="text" class="form-control" name="otraProfesion" id="otraProfesion" placeholder="pon tu profesión si no está en la lista"  value="{{ old('otraProfesion',$user->profile->otraProfesion) }}" >
+    <input type="text" class="form-control" name="otraProfesion" id="otraProfesion" placeholder="pon tu profesión si no está en la lista"  
+                value="{{ old('otraProfesion',$user->profile->otraProfesion) }}" >
     <div class="valid-feedback">Looks good!</div>
     <div class="invalid-feedback">Please choose a profession.</div>
 </div>
 
 <div class="form-group">
     <label for="twitter" >twitter:</label>
-    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="https://twitter.com/alexarregui"  value="{{ old('twitter',$user->profile-> twitter) }}" >
+    <input type="text" class="form-control" name="twitter" id="twitter" placeholder="https://twitter.com/alexarregui"  
+                value="{{ old('twitter',$user->profile-> twitter) }}" >
     <div class="valid-feedback">Looks good!</div>
     <div class="invalid-feedback">Please choose a url.</div>
 </div>

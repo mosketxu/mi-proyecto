@@ -2,10 +2,26 @@
 
 @section('title',"Editando el usuario $user->name")
 
-{{-- OPCION 1: antes de usar @include _errors ni include _fields.
-            Como no estaba desarrollada la he quitado --}}
+{{-- OPCION 1: antes de usar @include _errors ni include _fields tenia un if con los errores
+                Como no estaba desarrollada la he quitado 
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <h6>Por favor, corrige los errores:</h6>
+            <ul>
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+                --}}
 
-{{-- OPCION 2: usando @include _errors ni include _fields.              --}}
+{{-- OPCION 2: usando @include _errors  @include _fields.              
+        Quito el if de los errores y lo llevo a _error.blade.php
+        El guion bajo es para indicar que no es una vista completa, sino una subvista
+
+        Incluyo todos los campos en _fields y los llamo desde allí, para que me sirva junto con create.blade.php
+    --}}
 
 
 {{-- @section('content')

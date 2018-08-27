@@ -163,13 +163,13 @@ class UserController extends Controller
  */
 
         // opcion 1: sin view composer, explicacion en el metodo create
-        // $professions= Profession::OrderBy('title','ASC')->get(); 
-        // $skills=Skill::OrderBy('name','ASC')->get(); 
-        // $roles=trans('users.roles'); 
-        // return view('users.edit',compact('professions','skills','roles','user')); 
-
+/*          $professions= Profession::OrderBy('title','ASC')->get(); 
+            $skills=Skill::OrderBy('name','ASC')->get(); 
+            $roles=trans('users.roles'); 
+            return view('users.edit',compact('professions','skills','roles','user')); 
+ */
         // opcion 2: con viewcomposer
-        return view('users.edit','user')); 
+        return view('users.edit',compact('user')); 
 
     }
     

@@ -225,7 +225,7 @@
 
 //***************************
     {{-- OPCION CON INCLUDE DE PLANTILA:
-     me llevo parte del formulario a _fields.blade.php y así lo reaprovecho para el edit.
+     me llevo parte del formulario a _errors.blade.php y _fields.blade.php y así lo reaprovecho para el edit.
      tendré que modificar cositas como que en el caso del edit recupere el valor de la base de datos
      en el controlador mandar una instancia de user y en el modelo mandar una instancia de profile pq sino da error a la hora de un nuevo usuario --}}
 
